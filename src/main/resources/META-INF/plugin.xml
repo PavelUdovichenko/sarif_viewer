@@ -17,7 +17,7 @@
     </applicationListeners>
     <actions>
         <action id="PopupDialogAction" class="org.source.sarif_viewer.actions.PopupDialogAction"
-                text="Sarif-viewer" description="SDK plugin example">
+                text="Sarif-viewerr" description="SDK plugin example">
             <add-to-group group-id="MainToolBar" anchor="first"/>
         </action>
     </actions>
