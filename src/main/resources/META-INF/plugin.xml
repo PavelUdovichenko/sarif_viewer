@@ -1,7 +1,7 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.paveludovichenko.sarifviewer</id>
-    <name>sarif_viewer</name>
+    <name>Sarif Viewer</name>
     <vendor>paveludovichenko</vendor>
 
     <depends>com.intellij.modules.platform</depends>
@@ -9,16 +9,18 @@
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.github.paveludovichenko.sarifviewer.services.MyApplicationService"/>
         <projectService serviceImplementation="com.github.paveludovichenko.sarifviewer.services.MyProjectService"/>
+
+        <toolWindow id="Sarif Viewer"
+                    secondary="false"
+                    icon="AllIcons.General.Information"
+                    anchor="right"
+                    factoryClass="org.example.sarif_viewer.toolWindow.SarifViewerToolWindowFactory"/>
+
     </extensions>
 
     <applicationListeners>
         <listener class="com.github.paveludovichenko.sarifviewer.listeners.MyProjectManagerListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>
-    <actions>
-        <action id="PopupDialogAction" class="org.source.sarif_viewer.actions.PopupDialogAction"
-                text="Sarif-viewerr" description="SDK plugin example">
-            <add-to-group group-id="MainToolBar" anchor="first"/>
-        </action>
-    </actions>
+
 </idea-plugin>
