@@ -6,6 +6,7 @@
 
     <depends>com.intellij.modules.platform</depends>
 
+
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.github.paveludovichenko.sarifviewer.services.MyApplicationService"/>
         <projectService serviceImplementation="com.github.paveludovichenko.sarifviewer.services.MyProjectService"/>
@@ -22,5 +23,6 @@
         <listener class="com.github.paveludovichenko.sarifviewer.listeners.MyProjectManagerListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>
+
 
 </idea-plugin>

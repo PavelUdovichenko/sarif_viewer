@@ -7,6 +7,8 @@ import com.intellij.openapi.wm.ToolWindow;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.Calendar;
+import org.example.sarif_viewer.parser.SarifParser;
+import org.example.sarif_viewer.parser.SarifParser;
 
 public class SarifViewerToolWindow {
     private JPanel myToolWindowContent;
@@ -24,7 +26,19 @@ public class SarifViewerToolWindow {
     }
 
     private void createTable() {
-        table1.setModel(new DefaultTableModel(null, new String[]{"Title", "info"}));
+
+        Object[][] data = {
+                {"Rule Id", SarifParser.getVersion()},
+                {"Rule Name", ""},
+                {"Rule Description", ""},
+                {"Level", ""},
+                {"Location", ""},
+                {"Log", ""}
+        };
+        table1.setModel(new DefaultTableModel(
+                data,
+                new String[]{"", ""})
+        );
     }
 
 //    public void currentDateTime() {
