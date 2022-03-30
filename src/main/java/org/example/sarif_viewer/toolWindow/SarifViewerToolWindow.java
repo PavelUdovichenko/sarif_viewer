@@ -12,7 +12,6 @@ public class SarifViewerToolWindow {
     private JPanel myToolWindowContent;
     private JTabbedPane tabbedPanelUp;
     private JTabbedPane tabbedPanelDown;
-    private JTable table1;
     private JTree tree1;
     private JComboBox filterSV;
     private JButton openFile;
@@ -24,6 +23,7 @@ public class SarifViewerToolWindow {
     private JLabel lblLvl;
     private JLabel lblLoc;
     private JLabel lblLog;
+
 
     public SarifViewerToolWindow(ToolWindow toolWindow) {
         //hideToolWindowButton.addActionListener(e -> toolWindow.hide(null));
