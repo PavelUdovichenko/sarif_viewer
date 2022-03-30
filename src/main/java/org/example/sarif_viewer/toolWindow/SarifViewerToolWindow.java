@@ -6,8 +6,6 @@ package org.example.sarif_viewer.toolWindow;
 import com.intellij.openapi.wm.ToolWindow;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.util.Calendar;
-import org.example.sarif_viewer.parser.SarifParser;
 import org.example.sarif_viewer.parser.SarifParser;
 
 public class SarifViewerToolWindow {
@@ -16,29 +14,33 @@ public class SarifViewerToolWindow {
     private JTabbedPane tabbedPanelDown;
     private JTable table1;
     private JTree tree1;
+    private JComboBox filterSV;
+    private JButton openFile;
+
+    private JLabel lblTxtMessage;
+    private JLabel lblRulId;
+    private JLabel lblRulName;
+    private JLabel lblRulDes;
+    private JLabel lblLvl;
+    private JLabel lblLoc;
+    private JLabel lblLog;
 
     public SarifViewerToolWindow(ToolWindow toolWindow) {
         //hideToolWindowButton.addActionListener(e -> toolWindow.hide(null));
         //refreshToolWindowButton.addActionListener(e -> currentDateTime());
 
         //this.currentDateTime();
-        createTable();
+        tabInfo();
     }
 
-    private void createTable() {
-
-        Object[][] data = {
-                {"Rule Id", SarifParser.getVersion()},
-                {"Rule Name", ""},
-                {"Rule Description", ""},
-                {"Level", ""},
-                {"Location", ""},
-                {"Log", ""}
-        };
-        table1.setModel(new DefaultTableModel(
-                data,
-                new String[]{"", ""})
-        );
+    private void tabInfo() {
+        lblTxtMessage.setText(SarifParser.getInfo("$schema"));
+        lblRulId.setText(SarifParser.getInfo("version"));
+        lblRulName.setText(SarifParser.getInfo("version"));
+        lblRulDes.setText(SarifParser.getInfo("version"));
+        lblLvl.setText(SarifParser.getInfo("version"));
+        lblLoc.setText(SarifParser.getInfo("version"));
+        lblLog.setText(SarifParser.getInfo("version"));
     }
 
 //    public void currentDateTime() {
