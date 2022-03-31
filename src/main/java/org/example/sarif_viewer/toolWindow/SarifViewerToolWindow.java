@@ -6,7 +6,11 @@ package org.example.sarif_viewer.toolWindow;
 import com.intellij.openapi.wm.ToolWindow;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+
 import org.example.sarif_viewer.parser.SarifParser;
+
 
 public class SarifViewerToolWindow {
     private JPanel myToolWindowContent;
@@ -31,6 +35,19 @@ public class SarifViewerToolWindow {
 
         //this.currentDateTime();
         tabInfo();
+        treeInfo();
+    }
+
+    private void treeInfo() {
+        DefaultTreeModel model;
+        DefaultMutableTreeNode errorFile = new DefaultMutableTreeNode("file with error");
+        errorFile.add(new DefaultMutableTreeNode("the error description"));
+        model = (DefaultTreeModel) tree1.getModel();
+        model.setRoot(errorFile);
+        tree1.setModel(model);
+    }
+
+    private void createNodes(DefaultMutableTreeNode top) {
     }
 
     private void tabInfo() {

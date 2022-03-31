@@ -9,8 +9,9 @@ import java.io.*;
 import java.util.Iterator;
 
 public class SarifParser {
-    private static final String filepath = "F:\\JetBrains\\IntelliJ IDEA 2021.2.2\\IdeaProjects\\sarif_viewer\\src\\main\\resources\\result.sarif";
-
+    // this path is related to location for Andrey
+    //private static final String filepath = "F:\\JetBrains\\IntelliJ IDEA 2021.2.2\\IdeaProjects\\sarif_viewer\\src\\main\\resources\\result.sarif";
+    private static final String filepath = "D:\\Programs\\idea\\IdeaProjects\\sarif_viewer\\src\\main\\resources\\result.sarif";
     public static String getInfo(String x) {
         String info = "";
 
