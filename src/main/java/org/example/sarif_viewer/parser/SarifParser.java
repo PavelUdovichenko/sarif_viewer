@@ -1,5 +1,6 @@
 package org.example.sarif_viewer.parser;
 
+import org.example.sarif_viewer.fileChooser.FileOpen;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
@@ -9,21 +10,28 @@ import java.io.*;
 import java.util.Iterator;
 
 public class SarifParser {
-    // this path is related to location for Andrey
-    //private static final String filepath = "F:\\JetBrains\\IntelliJ IDEA 2021.2.2\\IdeaProjects\\sarif_viewer\\src\\main\\resources\\result.sarif";
-    private static final String filepath = "D:\\Programs\\idea\\IdeaProjects\\sarif_viewer\\src\\main\\resources\\result.sarif";
     public static String getInfo(String x) {
         String info = "";
 
         try {
             //читаем внутринности файла
-            FileReader sarifReader = new FileReader(filepath);
+            FileReader sarifReader = new FileReader(FileOpen.pathFile);
             JSONParser sarifParser = new JSONParser();
             JSONObject sarifObject = (JSONObject) sarifParser.parse(sarifReader);
 
             info = (String) sarifObject.get(x);
 
-//            JSONArray runs = (JSONArray) sarifObject.get("runs");
+            JSONArray runs = (JSONArray) sarifObject.get("runs");
+            Iterator run = runs.iterator();
+            JSONObject tool = (JSONObject) run.next();
+
+//            System.out.println(runs.get(0));
+
+            // Выводим в цикле данные массива
+//            while (r.hasNext()) {
+//                JSONObject r1 = (JSONObject) r.next();
+//                System.out.println("===>: " + r1.get("tool"));
+//            }
 //
 //            for (Object run : runs) {
 //                JSONObject runsinnerObject = (JSONObject) run;

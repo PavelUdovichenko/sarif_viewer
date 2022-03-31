@@ -5,12 +5,15 @@ package org.example.sarif_viewer.toolWindow;
 
 import com.intellij.openapi.wm.ToolWindow;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import org.example.sarif_viewer.fileChooser.FileOpen;
 import org.example.sarif_viewer.parser.SarifParser;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Objects;
 
 public class SarifViewerToolWindow {
     private JPanel myToolWindowContent;
@@ -31,23 +34,25 @@ public class SarifViewerToolWindow {
 
     public SarifViewerToolWindow(ToolWindow toolWindow) {
         //hideToolWindowButton.addActionListener(e -> toolWindow.hide(null));
-        //refreshToolWindowButton.addActionListener(e -> currentDateTime());
 
-        //this.currentDateTime();
-        tabInfo();
-        treeInfo();
+        openFile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FileOpen.clickBtn();
+                tabLocations();
+
+                tabInfo(); // изменяем по клику (выбору узла) в дереве
+            }
+        });
     }
 
-    private void treeInfo() {
+    private void tabLocations() {
         DefaultTreeModel model;
         DefaultMutableTreeNode errorFile = new DefaultMutableTreeNode("file with error");
         errorFile.add(new DefaultMutableTreeNode("the error description"));
         model = (DefaultTreeModel) tree1.getModel();
         model.setRoot(errorFile);
         tree1.setModel(model);
-    }
-
-    private void createNodes(DefaultMutableTreeNode top) {
     }
 
     private void tabInfo() {
