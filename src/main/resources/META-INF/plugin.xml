@@ -6,23 +6,19 @@
 
     <depends>com.intellij.modules.platform</depends>
 
-
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.github.paveludovichenko.sarifviewer.services.MyApplicationService"/>
         <projectService serviceImplementation="com.github.paveludovichenko.sarifviewer.services.MyProjectService"/>
 
         <toolWindow id="Sarif Viewer"
                     secondary="false"
-                    icon="AllIcons.General.Information"
                     anchor="right"
-                    factoryClass="org.example.sarif_viewer.toolWindow.SarifViewerToolWindowFactory"/>
-
+                    factoryClass="org.example.sarif_viewer.toolWindow.SarifViewerToolWindowFactory"
+                    icon="PluginIcons.EDIT_LOCATION_ICON"/>
     </extensions>
 
     <applicationListeners>
         <listener class="com.github.paveludovichenko.sarifviewer.listeners.MyProjectManagerListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>
-
-
 </idea-plugin>
