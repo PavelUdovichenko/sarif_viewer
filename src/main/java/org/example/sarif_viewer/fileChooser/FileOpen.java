@@ -20,9 +20,9 @@ public class FileOpen {
         int result = jFileChooser.showDialog(null, "Open file");
 
         // Если файл выбран, покажем его в сообщении
-        if (result == JFileChooser.APPROVE_OPTION )
+        if (result == JFileChooser.APPROVE_OPTION ) {
             JOptionPane.showMessageDialog(null, "Selectes file (" + jFileChooser.getSelectedFile().getName() + ")");
-
-        pathFile = jFileChooser.getSelectedFile().toString();
+            pathFile = jFileChooser.getSelectedFile().toString();
+        }
     }
 }
