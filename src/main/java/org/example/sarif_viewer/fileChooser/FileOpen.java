@@ -1,8 +1,10 @@
 package org.example.sarif_viewer.fileChooser;
 
 import javax.swing.*;
+
 public class FileOpen {
     public static String pathFile = "";
+    public static String openFile = "";
 
     public static void clickBtn() {
         JFileChooser jFileChooser = new JFileChooser();
@@ -21,8 +23,8 @@ public class FileOpen {
 
         // Если файл выбран, покажем его в сообщении
         if (result == JFileChooser.APPROVE_OPTION ) {
-            JOptionPane.showMessageDialog(null, "Selectes file (" + jFileChooser.getSelectedFile().getName() + ")");
             pathFile = jFileChooser.getSelectedFile().toString();
+            openFile = jFileChooser.getSelectedFile().getName();
         }
     }
 }

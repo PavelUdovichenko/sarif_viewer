@@ -3,6 +3,7 @@
 
 package org.example.sarif_viewer.toolWindow;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.wm.ToolWindow;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -16,8 +17,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
 
-import static com.intellij.util.IconUtil.createImageIcon;
-
 public class SarifViewerToolWindow {
     private JPanel myToolWindowContent;
 
@@ -29,7 +28,6 @@ public class SarifViewerToolWindow {
     private JButton openFile;
     private JButton openFile1;
 
-
     private JLabel lblTxtMessage;
     private JLabel lblRulId;
     private JLabel lblRulName;
@@ -38,8 +36,6 @@ public class SarifViewerToolWindow {
     private JLabel lblLoc;
     private JLabel lblLog;
 
-
-
     public SarifViewerToolWindow(ToolWindow toolWindow) {
         tabbedPanelUp.setEnabled(false);
         tabbedPanelUp.setVisible(false);
@@ -47,8 +43,6 @@ public class SarifViewerToolWindow {
         tabbedPanelDown.setVisible(false);
         toolBar.setEnabled(false);
         toolBar.setVisible(false);
-
-        //hideToolWindowButton.addActionListener(e -> toolWindow.hide(null));
 
         openFile.addActionListener(new ActionListener() {
             @Override
@@ -92,16 +86,14 @@ public class SarifViewerToolWindow {
         model.setRoot(errorFile);
         tree1.setModel(model);
         DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) tree1.getCellRenderer();
-        Icon leafIcon = new ImageIcon("D:\\Programs\\idea\\IdeaProjects\\sarif_viewer\\src\\main\\resources\\ico\\balloonError_dark.svg");
-        Icon openIcon = new ImageIcon("D:\\Programs\\idea\\IdeaProjects\\sarif_viewer\\src\\main\\resources\\ico\\balloonError_dark.svg");
-        Icon closedIcon = new ImageIcon("D:\\Programs\\idea\\IdeaProjects\\sarif_viewer\\src\\main\\resources\\ico\\balloonError_dark.svg");
 
+        Icon leafIcon = AllIcons.General.Error;
+//        Icon openIcon = AllIcons.General.Warning;
+//        Icon closedIcon = AllIcons.General.Warning;
         renderer.setLeafIcon(leafIcon);
-        renderer.setClosedIcon(closedIcon);
-        renderer.setOpenIcon(openIcon);
-        }
-
-
+        renderer.setClosedIcon(null);
+        renderer.setOpenIcon(null);
+    }
 
     private void tabInfo() {
         lblTxtMessage.setText(SarifParser.getInfo("$schema"));
@@ -110,31 +102,8 @@ public class SarifViewerToolWindow {
         lblRulDes.setText(SarifParser.getInfo("version"));
         lblLvl.setText(SarifParser.getInfo("version"));
         lblLoc.setText(SarifParser.getInfo("version"));
-        lblLog.setText(SarifParser.getInfo("version"));
+        lblLog.setText(FileOpen.openFile);
     }
-
-//    public void currentDateTime() {
-//
-//        // Get current date and time
-//        Calendar instance = Calendar.getInstance();
-//        currentDate.setText(
-//                instance.get(Calendar.DAY_OF_MONTH) + "/"
-//                        + (instance.get(Calendar.MONTH) + 1) + "/"
-//                        + instance.get(Calendar.YEAR)
-//        );
-//        currentDate.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/ico/1.png"))));
-//        int min = instance.get(Calendar.MINUTE);
-//        String strMin = min < 10 ? "0" + min : String.valueOf(min);
-//        currentTime.setText(instance.get(Calendar.HOUR_OF_DAY) + ":" + strMin);
-//        currentTime.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/ico/1.png"))));
-//        // Get time zone
-//        long gmt_Offset = instance.get(Calendar.ZONE_OFFSET); // offset from GMT in milliseconds
-//        String str_gmt_Offset = String.valueOf(gmt_Offset / 3600000);
-//        str_gmt_Offset = (gmt_Offset > 0) ? "GMT + " + str_gmt_Offset : "GMT - " + str_gmt_Offset;
-//        timeZone.setText(str_gmt_Offset);
-//        timeZone.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/ico/1.png"))));
-//
-//    }
 
     public JPanel getContent() {
         return myToolWindowContent;
