@@ -6,6 +6,7 @@ package org.example.sarif_viewer.toolWindow;
 import com.intellij.openapi.wm.ToolWindow;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 
 import org.example.sarif_viewer.fileChooser.FileOpen;
@@ -14,6 +15,8 @@ import org.example.sarif_viewer.parser.SarifParser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
+
+import static com.intellij.util.IconUtil.createImageIcon;
 
 public class SarifViewerToolWindow {
     private JPanel myToolWindowContent;
@@ -88,7 +91,17 @@ public class SarifViewerToolWindow {
         model = (DefaultTreeModel) tree1.getModel();
         model.setRoot(errorFile);
         tree1.setModel(model);
-    }
+        DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) tree1.getCellRenderer();
+        Icon leafIcon = new ImageIcon("D:\\Programs\\idea\\IdeaProjects\\sarif_viewer\\src\\main\\resources\\ico\\balloonError_dark.svg");
+        Icon openIcon = new ImageIcon("D:\\Programs\\idea\\IdeaProjects\\sarif_viewer\\src\\main\\resources\\ico\\balloonError_dark.svg");
+        Icon closedIcon = new ImageIcon("D:\\Programs\\idea\\IdeaProjects\\sarif_viewer\\src\\main\\resources\\ico\\balloonError_dark.svg");
+
+        renderer.setLeafIcon(leafIcon);
+        renderer.setClosedIcon(closedIcon);
+        renderer.setOpenIcon(openIcon);
+        }
+
+
 
     private void tabInfo() {
         lblTxtMessage.setText(SarifParser.getInfo("$schema"));
