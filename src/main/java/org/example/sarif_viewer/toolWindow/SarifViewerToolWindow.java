@@ -13,6 +13,7 @@ import javax.swing.tree.DefaultTreeModel;
 import org.example.sarif_viewer.fileChooser.FileOpen;
 import org.example.sarif_viewer.parser.SarifParser;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
@@ -23,10 +24,10 @@ public class SarifViewerToolWindow {
     private JToolBar toolBar;
     private JTabbedPane tabbedPanelUp;
     private JTabbedPane tabbedPanelDown;
-    private JTree tree1;
+    private JTree treeLocations;
     private JComboBox filterSV;
     private JButton openFile;
-    private JButton openFile1;
+    private JButton openFileMain;
 
     private JLabel lblTxtMessage;
     private JLabel lblRulId;
@@ -35,9 +36,15 @@ public class SarifViewerToolWindow {
     private JLabel lblLvl;
     private JLabel lblLoc;
     private JLabel lblLog;
+    private JScrollPane scrollPaneLocaations;
 
     public SarifViewerToolWindow(ToolWindow toolWindow) {
+        openFileMain.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        openFile.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         openFile.setIcon(AllIcons.Actions.MenuOpen);
+        treeLocations.setBorder(BorderFactory.createEmptyBorder());
+
+        scrollPaneLocaations.setBorder(BorderFactory.createEmptyBorder());
         tabbedPanelUp.setEnabled(false);
         tabbedPanelUp.setVisible(false);
         tabbedPanelDown.setEnabled(false);
@@ -57,7 +64,7 @@ public class SarifViewerToolWindow {
             }
         });
 
-        openFile1.addActionListener(new ActionListener() {
+        openFileMain.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 FileOpen.clickBtn();
@@ -69,8 +76,8 @@ public class SarifViewerToolWindow {
                     tabbedPanelDown.setVisible(true);
                     toolBar.setEnabled(true);
                     toolBar.setVisible(true);
-                    openFile1.setEnabled(false);
-                    openFile1.setVisible(false);
+                    openFileMain.setEnabled(false);
+                    openFileMain.setVisible(false);
 
                     tabLocations();
                     tabInfo(); // изменяем по клику (выбору узла) в дереве
@@ -83,10 +90,10 @@ public class SarifViewerToolWindow {
         DefaultTreeModel model;
         DefaultMutableTreeNode errorFile = new DefaultMutableTreeNode("file with error");
         errorFile.add(new DefaultMutableTreeNode("the error description"));
-        model = (DefaultTreeModel) tree1.getModel();
+        model = (DefaultTreeModel) treeLocations.getModel();
         model.setRoot(errorFile);
-        tree1.setModel(model);
-        DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) tree1.getCellRenderer();
+        treeLocations.setModel(model);
+        DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) treeLocations.getCellRenderer();
 
         Icon leafIcon = AllIcons.General.Error;
 //        Icon openIcon = AllIcons.General.Warning;
