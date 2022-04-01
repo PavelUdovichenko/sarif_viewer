@@ -281,7 +281,7 @@
               <enabled value="true"/>
               <hideActionText value="false"/>
               <horizontalTextPosition value="0"/>
-              <text value="Open File..."/>
+              <text value=""/>
             </properties>
           </component>
         </children>

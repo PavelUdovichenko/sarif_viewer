@@ -37,6 +37,7 @@ public class SarifViewerToolWindow {
     private JLabel lblLog;
 
     public SarifViewerToolWindow(ToolWindow toolWindow) {
+        openFile.setIcon(AllIcons.Actions.MenuOpen);
         tabbedPanelUp.setEnabled(false);
         tabbedPanelUp.setVisible(false);
         tabbedPanelDown.setEnabled(false);
