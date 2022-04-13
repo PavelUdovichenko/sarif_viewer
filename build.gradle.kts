@@ -19,6 +19,10 @@ plugins {
 dependencies{
     // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
     implementation("com.googlecode.json-simple:json-simple:1.1.1")
+    //implementation("org.json:json:20220320") ## Json parser
+    //implementation("org.codehaus.jackson:jackson-core-asl:1.9.13") ## Jackson Parser
+
+
 }
 
 group = properties("pluginGroup")
