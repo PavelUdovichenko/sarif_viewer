@@ -23,11 +23,7 @@ public class SarifParser {
             JSONArray mainTree = (JSONArray) sarifObject.get("runs");
             JSONObject childrens = (JSONObject) sarifParser.parse(String.valueOf(mainTree.get(0)));
 
-//            System.out.println(Arrays.toString(keys));
-
             info = parseJSON(sarifParser, childrens, keys, info);
-
-//            System.out.println(info);
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
