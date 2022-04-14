@@ -109,6 +109,8 @@ public class SarifViewerToolWindow {
             leafIcon = AllIcons.General.Warning;
         } else if (SarifParser.getInfo("results.level").equals("note")) {
             leafIcon = AllIcons.General.Note;
+        } else {
+            leafIcon = AllIcons.General.Warning;
         }
 
         renderer.setLeafIcon(leafIcon);
