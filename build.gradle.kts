@@ -16,13 +16,12 @@ plugins {
     id("org.jetbrains.qodana") version "0.1.13"
 }
 
-dependencies{
+dependencies {
     // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
     implementation("com.googlecode.json-simple:json-simple:1.1.1")
-    //implementation("org.json:json:20220320") ## Json parser
-    //implementation("org.codehaus.jackson:jackson-core-asl:1.9.13") ## Jackson Parser
 
-
+//    implementation("org.json:json:20220320")
+//    implementation("org.codehaus.jackson:jackson-core-asl:1.9.13")
 }
 
 group = properties("pluginGroup")
