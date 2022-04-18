@@ -11,15 +11,10 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 
 import org.example.sarif_viewer.fileChooser.FileOpen;
-import org.example.sarif_viewer.parser.SarifParser;
+import org.example.sarif_viewer.parser.JsonParse;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.Vector;
 
 public class SarifViewerToolWindow {
     private JPanel myToolWindowContent;
@@ -56,58 +51,54 @@ public class SarifViewerToolWindow {
         toolBar.setEnabled(false);
         toolBar.setVisible(false);
 
-        openFile.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                FileOpen.clickBtn();
+        openFile.addActionListener(e -> {
+            FileOpen.clickBtn();
 
-                if (!Objects.equals(FileOpen.pathFile, "")) {
-                    tabLocations();
-                    tabLogs();
-                    tabInfo(); // изменяем по клику (выбору узла) в дереве
-                }
+            if (!Objects.equals(FileOpen.pathFile, "")) {
+                tabLocations();
+                tabLogs();
+                tabInfo(); // изменяем по клику (выбору узла) в дереве
             }
         });
 
-        openFileMain.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                FileOpen.clickBtn();
+        openFileMain.addActionListener(e -> {
+            FileOpen.clickBtn();
 
-                if (!Objects.equals(FileOpen.pathFile, "")) {
-                    tabbedPanelUp.setEnabled(true);
-                    tabbedPanelUp.setVisible(true);
-                    tabbedPanelDown.setEnabled(true);
-                    tabbedPanelDown.setVisible(true);
-                    toolBar.setEnabled(true);
-                    toolBar.setVisible(true);
-                    openFileMain.setEnabled(false);
-                    openFileMain.setVisible(false);
+            if (!Objects.equals(FileOpen.pathFile, "")) {
+                tabbedPanelUp.setEnabled(true);
+                tabbedPanelUp.setVisible(true);
+                tabbedPanelDown.setEnabled(true);
+                tabbedPanelDown.setVisible(true);
+                toolBar.setEnabled(true);
+                toolBar.setVisible(true);
+                openFileMain.setEnabled(false);
+                openFileMain.setVisible(false);
 
-                    tabLogs();
-                    tabLocations();
-                    tabInfo(); // изменяем по клику (выбору узла) в дереве
-                }
+                tabLogs();
+                tabLocations();
+                tabInfo(); // изменяем по клику (выбору узла) в дереве
             }
         });
     }
 
     private void tabLocations() {
-        DefaultTreeModel model;
-        DefaultMutableTreeNode errorFile = new DefaultMutableTreeNode(SarifParser.getInfo("results.locations.physicalLocation.artifactLocation.uri"));
-        errorFile.add(new DefaultMutableTreeNode(SarifParser.getInfo("results.message.text")));
-        model = (DefaultTreeModel) treeLocations.getModel();
+        String[] uri = JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
+
+        DefaultMutableTreeNode errorFile = new DefaultMutableTreeNode(uri[uri.length - 1]);
+        errorFile.add(new DefaultMutableTreeNode(JsonParse.parseJson().getRuns().get(0).getResults().get(0).getMessage().getText()));
+
+        DefaultTreeModel model = (DefaultTreeModel) treeLocations.getModel();
         model.setRoot(errorFile);
         treeLocations.setModel(model);
         DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) treeLocations.getCellRenderer();
 
-        Icon leafIcon = null;
+        Icon leafIcon;
 
-        if (SarifParser.getInfo("results.level").equals("error")) {
+        if (JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLevel().equals("error")) {
             leafIcon = AllIcons.General.Error;
-        } else if (SarifParser.getInfo("results.level").equals("warning")) {
+        } else if (JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLevel().equals("warning")) {
             leafIcon = AllIcons.General.Warning;
-        } else if (SarifParser.getInfo("results.level").equals("note")) {
+        } else if (JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLevel().equals("note")) {
             leafIcon = AllIcons.General.Note;
         } else {
             leafIcon = AllIcons.General.Warning;
@@ -118,7 +109,7 @@ public class SarifViewerToolWindow {
         renderer.setOpenIcon(null);
     }
 
-    private void taabRules() {
+    private void tabRules() {
 
     }
 
@@ -127,14 +118,17 @@ public class SarifViewerToolWindow {
     }
 
     private void tabInfo() {
-        lblTxtMessage.setText(SarifParser.getInfo("results.message.text"));
-        lblRulId.setText(SarifParser.getInfo("results.ruleId"));
-        lblRulName.setText(SarifParser.getInfo("tool.driver.rules.name"));
-        lblRulDes.setText(SarifParser.getInfo("tool.driver.rules.shortDescription.text"));
-        lblLvl.setText(SarifParser.getInfo("results.level"));
-        lblLoc.setText(SarifParser.getInfo("results.locations.physicalLocation.artifactLocation.uri"));
+        String[] uri = JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
+
+        lblTxtMessage.setText(JsonParse.parseJson().getRuns().get(0).getResults().get(0).getMessage().getText());
+        lblRulId.setText(JsonParse.parseJson().getRuns().get(0).getResults().get(0).getRuleId());
+        lblRulName.setText(JsonParse.parseJson().getRuns().get(0).getTool().getDriver().getRules().get(0).getName());
+        lblRulDes.setText(JsonParse.parseJson().getRuns().get(0).getTool().getDriver().getRules().get(0).getShortDescription().getText());
+        lblLvl.setText(JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLevel());
+        lblLoc.setText(uri[uri.length - 1]);
         lblLog.setText(FileOpen.openFile);
     }
+
     public JPanel getContent() {
         return myToolWindowContent;
     }

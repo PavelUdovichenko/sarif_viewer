@@ -20,8 +20,12 @@ dependencies {
     // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
     implementation("com.googlecode.json-simple:json-simple:1.1.1")
 
-//    implementation("org.json:json:20220320")
-//    implementation("org.codehaus.jackson:jackson-core-asl:1.9.13")
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+    implementation("com.fasterxml.jackson.core:jackson-core:2.13.2")
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.13.2")
 }
 
 group = properties("pluginGroup")
