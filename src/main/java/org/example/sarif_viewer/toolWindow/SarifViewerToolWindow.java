@@ -6,9 +6,11 @@ package org.example.sarif_viewer.toolWindow;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.wm.ToolWindow;
 import javax.swing.*;
+import javax.swing.text.Position;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 import org.example.sarif_viewer.fileChooser.FileOpen;
 import org.example.sarif_viewer.parser.JsonParse;
@@ -35,7 +37,6 @@ public class SarifViewerToolWindow {
     private JLabel lblLoc;
     private JLabel lblLog;
     private JScrollPane scrollPaneLocaations;
-    private JList listLogs;
 
     public SarifViewerToolWindow(ToolWindow toolWindow) {
         openFileMain.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -94,19 +95,22 @@ public class SarifViewerToolWindow {
 
         Icon leafIcon;
 
-        if (JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLevel().equals("error")) {
+        if (JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLevel().equals("error"))
             leafIcon = AllIcons.General.Error;
-        } else if (JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLevel().equals("warning")) {
+        else if (JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLevel().equals("warning"))
             leafIcon = AllIcons.General.Warning;
-        } else if (JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLevel().equals("note")) {
+        else if (JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLevel().equals("note"))
             leafIcon = AllIcons.General.Note;
-        } else {
+        else
             leafIcon = AllIcons.General.Warning;
-        }
 
         renderer.setLeafIcon(leafIcon);
         renderer.setClosedIcon(null);
         renderer.setOpenIcon(null);
+
+        final TreePath treePath = treeLocations.getNextMatch(uri[uri.length - 1], 0, Position.Bias.Forward);
+        if (treePath != null)
+            treeLocations.collapsePath(treePath);
     }
 
     private void tabRules() {
