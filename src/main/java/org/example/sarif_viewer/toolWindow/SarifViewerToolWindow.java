@@ -4,13 +4,8 @@
 package org.example.sarif_viewer.toolWindow;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.psi.PsiFile;
-import org.example.sarif_viewer.Psi.MyPSI;
+import org.example.sarif_viewer.Psi.psiMouseListener;
 import org.example.sarif_viewer.fileChooser.FileOpen;
 import org.example.sarif_viewer.parser.JsonParse;
 
@@ -21,8 +16,6 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Objects;
 
 import static org.example.sarif_viewer.fileChooser.FileOpen.clickBtn;
@@ -140,55 +133,19 @@ public class SarifViewerToolWindow {
         lblRulDes.setText(JsonParse.parseJson().getRuns().get(0).getTool().getDriver().getRules().get(0).getShortDescription().getText());
         lblLvl.setText(JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLevel());
         lblLoc.setText(uri[uri.length - 1]);
+        lblLoc.addMouseListener( new psiMouseListener(uri[uri.length - 1]));
         lblLog.setText(FileOpen.openFile);
-        lblLog.addMouseListener( new MyMouseListener());
+        lblLog.addMouseListener( new psiMouseListener(lblLog.getText()));
 
     }
 
     public JPanel getContent() {
         return myToolWindowContent;
     }
-    public void getRef()  {
-        PsiFile psiFile = (PsiFile) FileOpen.gFile;
-        Project project = psiFile.getProject();
-        VirtualFile vFile = psiFile.getVirtualFile();
-        OpenFileDescriptor descriptor = new OpenFileDescriptor(project, vFile);
-        FileEditorManager.getInstance(project).openEditor(descriptor, true);
-
-    }
 
 
 
 
-    private class MyMouseListener implements MouseListener {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            String fPath = FileOpen.pathFile;
-            MyPSI.whatPsi(fPath);
 
-
-
-        }
-
-        @Override
-        public void mousePressed(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mouseExited(MouseEvent e) {
-
-        }
-    }
 
 }
