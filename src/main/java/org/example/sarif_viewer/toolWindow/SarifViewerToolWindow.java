@@ -2,38 +2,31 @@
 // license that can be found in the LICENSE file.
 
 package org.example.sarif_viewer.toolWindow;
+
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.psi.PsiFile;
+import org.example.sarif_viewer.Psi.MyPSI;
+import org.example.sarif_viewer.fileChooser.FileOpen;
+import org.example.sarif_viewer.parser.JsonParse;
+
 import javax.swing.*;
 import javax.swing.text.Position;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-
-import com.intellij.pom.Navigatable;
-import com.intellij.psi.PsiFile;
-import org.example.sarif_viewer.Psi.MyPSI;
-import org.example.sarif_viewer.fileChooser.FileOpen;
-import org.example.sarif_viewer.parser.JsonParse;
-
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import java.util.Objects;
 
-import static com.intellij.openapi.project.Project.DIRECTORY_STORE_FOLDER;
-import static org.example.sarif_viewer.fileChooser.FileOpen.*;
+import static org.example.sarif_viewer.fileChooser.FileOpen.clickBtn;
+import static org.example.sarif_viewer.fileChooser.FileOpen.pathFile;
 
 public class SarifViewerToolWindow {
     private JPanel myToolWindowContent;
@@ -52,7 +45,7 @@ public class SarifViewerToolWindow {
     private JLabel lblRulDes;
     private JLabel lblLvl;
     private JLabel lblLoc;
-    private static JLabel lblLog;
+    private JLabel lblLog;
     private JScrollPane scrollPaneLocaations;
 
     public SarifViewerToolWindow(ToolWindow toolWindow) {
@@ -149,7 +142,7 @@ public class SarifViewerToolWindow {
         lblLoc.setText(uri[uri.length - 1]);
         lblLog.setText(FileOpen.openFile);
         lblLog.addMouseListener( new MyMouseListener());
-        //openFileEditor(FileOpen.gFile, project);
+
     }
 
     public JPanel getContent() {
@@ -161,26 +154,18 @@ public class SarifViewerToolWindow {
         VirtualFile vFile = psiFile.getVirtualFile();
         OpenFileDescriptor descriptor = new OpenFileDescriptor(project, vFile);
         FileEditorManager.getInstance(project).openEditor(descriptor, true);
-        lblLog.setText("FileOpen.openFile");
+
     }
 
-    public static void openFileEditor(File mfile){
-        MyPSI.psiFile = (PsiFile) mfile;
-        File file = (File) MyPSI.psiFile;
-        Project project = MyPSI.psiFile.getProject();
-        ApplicationManager.getApplication().invokeAndWait(()->{
-            VirtualFile vf = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file);
-            OpenFileDescriptor descriptor = new OpenFileDescriptor(project, vf);
-            FileEditorManager.getInstance(project).openTextEditor(descriptor, false);
-        });
-        lblLog.setText("FileOpen.openFile");
-    }
+
+
 
     private class MyMouseListener implements MouseListener {
         @Override
         public void mouseClicked(MouseEvent e) {
+            String fPath = FileOpen.pathFile;
+            MyPSI.whatPsi(fPath);
 
-            openFileEditor(FileOpen.gFile);
 
 
         }
