@@ -1,9 +1,6 @@
 package org.example.sarif_viewer.fileChooser;
 
-import com.intellij.psi.PsiFile;
-
 import javax.swing.*;
-import java.io.File;
 
 public class FileOpen {
     public static String pathFile = "";

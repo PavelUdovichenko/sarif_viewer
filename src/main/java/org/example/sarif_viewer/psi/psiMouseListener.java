@@ -1,4 +1,4 @@
-package org.example.sarif_viewer.Psi;
+package org.example.sarif_viewer.psi;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;

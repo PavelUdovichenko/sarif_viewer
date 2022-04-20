@@ -5,7 +5,8 @@ package org.example.sarif_viewer.toolWindow;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.wm.ToolWindow;
-import org.example.sarif_viewer.Psi.psiMouseListener;
+import com.intellij.ui.JBColor;
+import org.example.sarif_viewer.psi.psiMouseListener;
 import org.example.sarif_viewer.fileChooser.FileOpen;
 import org.example.sarif_viewer.parser.JsonParse;
 
@@ -60,7 +61,7 @@ public class SarifViewerToolWindow {
 
             if (!Objects.equals(pathFile, "")) {
                 tabLocations();
-                tabLogs();
+                tabRules();
                 tabInfo(); // изменяем по клику (выбору узла) в дереве
             }
         });
@@ -78,8 +79,8 @@ public class SarifViewerToolWindow {
                 openFileMain.setEnabled(false);
                 openFileMain.setVisible(false);
 
-                tabLogs();
                 tabLocations();
+                tabRules();
                 tabInfo(); // изменяем по клику (выбору узла) в дереве
             }
         });
@@ -120,10 +121,6 @@ public class SarifViewerToolWindow {
 
     }
 
-    private void tabLogs() {
-//        listLogs.setModel();
-    }
-
     private void tabInfo() {
         String[] uri = JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
 
@@ -133,10 +130,14 @@ public class SarifViewerToolWindow {
         lblRulDes.setText(JsonParse.parseJson().getRuns().get(0).getTool().getDriver().getRules().get(0).getShortDescription().getText());
         lblLvl.setText(JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLevel());
 
-        lblLoc.setText(uri[uri.length - 1]);
+        lblLoc.setText("<html><u>" + uri[uri.length - 1] + "</u></html>");
+        lblLoc.setForeground(JBColor.BLUE);
+        lblLoc.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         lblLoc.addMouseListener(new psiMouseListener(JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri()));
 
-        lblLog.setText(FileOpen.openFile);
+        lblLog.setText("<html><u>" + FileOpen.openFile + "</u></html>");
+        lblLog.setForeground(JBColor.BLUE);
+        lblLog.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         lblLog.addMouseListener(new psiMouseListener(FileOpen.pathFile));
     }
 
