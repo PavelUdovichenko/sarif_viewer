@@ -8,8 +8,6 @@ import java.io.File;
 public class FileOpen {
     public static String pathFile = "";
     public static String openFile = "";
-    private static PsiFile containingFile;
-    public static File gFile;
 
     public static void clickBtn() {
         JFileChooser jFileChooser = new JFileChooser();
@@ -32,11 +30,6 @@ public class FileOpen {
         if (result == JFileChooser.APPROVE_OPTION ) {
             pathFile = jFileChooser.getSelectedFile().toString();
             openFile = jFileChooser.getSelectedFile().getName();
-            gFile = jFileChooser.getSelectedFile();
         }
     }
-
-
-
-
 }

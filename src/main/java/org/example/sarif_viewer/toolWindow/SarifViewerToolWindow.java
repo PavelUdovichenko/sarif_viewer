@@ -132,20 +132,15 @@ public class SarifViewerToolWindow {
         lblRulName.setText(JsonParse.parseJson().getRuns().get(0).getTool().getDriver().getRules().get(0).getName());
         lblRulDes.setText(JsonParse.parseJson().getRuns().get(0).getTool().getDriver().getRules().get(0).getShortDescription().getText());
         lblLvl.setText(JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLevel());
-        lblLoc.setText(uri[uri.length - 1]);
-        lblLoc.addMouseListener( new psiMouseListener(uri[uri.length - 1]));
-        lblLog.setText(FileOpen.openFile);
-        lblLog.addMouseListener( new psiMouseListener(lblLog.getText()));
 
+        lblLoc.setText(uri[uri.length - 1]);
+        lblLoc.addMouseListener(new psiMouseListener(JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri()));
+
+        lblLog.setText(FileOpen.openFile);
+        lblLog.addMouseListener(new psiMouseListener(FileOpen.pathFile));
     }
 
     public JPanel getContent() {
         return myToolWindowContent;
     }
-
-
-
-
-
-
 }
