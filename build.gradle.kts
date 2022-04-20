@@ -18,9 +18,6 @@ plugins {
 }
 
 dependencies {
-    // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
-    implementation("com.googlecode.json-simple:json-simple:1.1.1")
-
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
