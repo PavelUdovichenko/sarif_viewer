@@ -8,19 +8,21 @@ import java.nio.file.Paths;
 
 public class psiMouseListener implements MouseListener {
     Path pathFile;
-    String fPath;
+    String fileName;
 
     public psiMouseListener( String fName) {
         pathFile = Paths.get(fName);
         //System.out.println(fName);
         //fPath = pathFile.toAbsolutePath().toString();
         //System.out.println(fName);
-        fPath = fName;
+        fileName = fName;
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        MyPSI.whatPsi(fPath);
+
+        MyPSI.whatPsi(fileName);
+
     }
 
     @Override
