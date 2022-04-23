@@ -6,16 +6,14 @@ package org.example.sarif_viewer.toolWindow;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.JBColor;
+import org.example.sarif_viewer.psi.fileWithPsiElement;
 import org.example.sarif_viewer.psi.psiMouseListener;
 import org.example.sarif_viewer.fileChooser.FileOpen;
 import org.example.sarif_viewer.parser.JsonParse;
 
 import javax.swing.*;
 import javax.swing.text.Position;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
+import javax.swing.tree.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -35,13 +33,20 @@ public class SarifViewerToolWindow {
     private JButton openFileMain;
 
     private JLabel lblTxtMessage;
+    private JLabel ruleIdLabel;
     private JLabel lblRulId;
+    private JLabel ruleNameLabel;
     private JLabel lblRulName;
+    private JLabel ruleDescriptionLabel;
     private JLabel lblRulDes;
+    private JLabel levelLabel;
     private JLabel lblLvl;
+    private JLabel locationLabel;
     private JLabel lblLoc;
+    private JLabel logLabel;
     private JLabel lblLog;
     private JScrollPane scrollPaneLocaations;
+
 
     public SarifViewerToolWindow(ToolWindow toolWindow) {
         openFileMain.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -58,6 +63,24 @@ public class SarifViewerToolWindow {
         tabbedPanelDown.setVisible(false);
         toolBar.setEnabled(false);
         toolBar.setVisible(false);
+
+        lblTxtMessage.setVisible(false);
+        ruleIdLabel.setVisible(false);
+        lblRulId.setVisible(false);
+        ruleNameLabel.setVisible(false);
+        lblRulName.setVisible(false);
+        ruleDescriptionLabel.setVisible(false);
+        lblRulDes.setVisible(false);
+        levelLabel.setVisible(false);
+        lblLvl.setVisible(false);
+        locationLabel.setVisible(false);
+        lblLoc.setVisible(false);
+        lblLoc.setForeground(JBColor.BLUE);
+        lblLoc.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        logLabel.setVisible(false);
+        lblLog.setVisible(false);
+        lblLog.setForeground(JBColor.BLUE);
+        lblLog.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         openFile.addActionListener(e -> {
             clickBtn();
@@ -96,17 +119,22 @@ public class SarifViewerToolWindow {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
 
             if (node.isLeaf()) {
-                System.out.println(node);
-                tabInfo();
+                for (int i = 0; i < JsonParse.parseJson().getRuns().get(0).getResults().size(); i++) {
+                    if (JsonParse.parseJson().getRuns().get(0).getResults().get(i).getMessage().getText().equals(node.toString())) {
+                        tabInfo(i);
+                        break;
+                    }
+                }
             } else {
-                System.out.println(node);
-//                new psiMouseListener(JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri());
+                tabInfoClear();
+                for (int i = 0; i < JsonParse.parseJson().getRuns().get(0).getResults().size(); i++) {
+                    if (JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().contains(node.toString())) {
+                        fileWithPsiElement.psiElement(JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri());
+                        break;
+                    }
+                }
             }
         });
-
-        final TreePath treePath = treeLocations.getNextMatch(uri[uri.length - 1], 0, Position.Bias.Forward);
-        if (treePath != null)
-            treeLocations.collapsePath(treePath);
 
         treeLocations.setCellRenderer(new DefaultTreeCellRenderer() {
             @Override
@@ -117,7 +145,7 @@ public class SarifViewerToolWindow {
                 Object obj = ((DefaultMutableTreeNode) value).getUserObject();
 
                 if (isLeaf) {
-                    System.out.println(obj);
+//                    System.out.println(obj);
 //                    System.out.println(((DefaultMutableTreeNode) value).getParent());
                     setIcon(AllIcons.General.Error);
                 } else {
@@ -142,6 +170,10 @@ public class SarifViewerToolWindow {
                 return c;
             }
         });
+
+        final TreePath treePath = treeLocations.getNextMatch("", 0, Position.Bias.Forward);
+        if (treePath != null)
+            treeLocations.collapsePath(treePath);
     }
 
     private void getModelJTree(JTree jTree) {
@@ -165,24 +197,65 @@ public class SarifViewerToolWindow {
 
     }
 
-    private void tabInfo() {
-        String[] uri = JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
+    private void tabInfo(int indexResult) {
+        String txtMessage = JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getMessage().getText();
+        lblTxtMessage.setVisible(true);
+        lblTxtMessage.setText(txtMessage);
 
-        lblTxtMessage.setText(JsonParse.parseJson().getRuns().get(0).getResults().get(0).getMessage().getText());
-        lblRulId.setText(JsonParse.parseJson().getRuns().get(0).getResults().get(0).getRuleId());
-        lblRulName.setText(JsonParse.parseJson().getRuns().get(0).getTool().getDriver().getRules().get(0).getName());
-        lblRulDes.setText(JsonParse.parseJson().getRuns().get(0).getTool().getDriver().getRules().get(0).getShortDescription().getText());
-        lblLvl.setText(JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLevel());
+        String ruleId = JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getRuleId();
+        ruleIdLabel.setVisible(true);
+        lblRulId.setVisible(true);
+        lblRulId.setText(Objects.requireNonNullElse(ruleId, "-"));
 
+        String ruleName = JsonParse.parseJson().getRuns().get(0).getTool().getDriver().getRules().get(0).getName();
+        ruleNameLabel.setVisible(true);
+        lblRulName.setVisible(true);
+        lblRulName.setText(Objects.requireNonNullElse(ruleName, "-"));
+
+        String ruleDescription = JsonParse.parseJson().getRuns().get(0).getTool().getDriver().getRules().get(0).getShortDescription().getText();
+        ruleDescriptionLabel.setVisible(true);
+        lblRulDes.setVisible(true);
+        lblRulDes.setText(Objects.requireNonNullElse(ruleDescription, "-"));
+
+        String level = JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLevel();
+        levelLabel.setVisible(true);
+        lblLvl.setVisible(true);
+        lblLvl.setText(Objects.requireNonNullElse(level, "-"));
+
+        String[] uri = JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
+        locationLabel.setVisible(true);
+        lblLoc.setVisible(true);
         lblLoc.setText("<html><u>" + uri[uri.length - 1] + "</u></html>");
-        lblLoc.setForeground(JBColor.BLUE);
-        lblLoc.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        lblLoc.addMouseListener(new psiMouseListener(JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri()));
+        lblLoc.addMouseListener(new psiMouseListener(JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri()));
 
+        logLabel.setVisible(true);
+        lblLog.setVisible(true);
         lblLog.setText("<html><u>" + FileOpen.openFile + "</u></html>");
-        lblLog.setForeground(JBColor.BLUE);
         lblLog.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         lblLog.addMouseListener(new psiMouseListener(FileOpen.pathFile));
+    }
+
+    private void tabInfoClear() {
+        lblTxtMessage.setText("");
+        lblTxtMessage.setVisible(false);
+        ruleIdLabel.setVisible(false);
+        lblRulId.setVisible(false);
+        lblRulId.setText("");
+        ruleNameLabel.setVisible(false);
+        lblRulName.setVisible(false);
+        lblRulName.setText("");
+        ruleDescriptionLabel.setVisible(false);
+        lblRulDes.setVisible(false);
+        lblRulDes.setText("");
+        levelLabel.setVisible(false);
+        lblLvl.setVisible(false);
+        lblLvl.setText("");
+        locationLabel.setVisible(false);
+        lblLoc.setVisible(false);
+        lblLoc.setText("");
+        logLabel.setVisible(false);
+        lblLog.setVisible(false);
+        lblLog.setText("");
     }
 
     public JPanel getContent() {

@@ -107,7 +107,7 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <component id="88fb3" class="javax.swing.JLabel">
+                  <component id="88fb3" class="javax.swing.JLabel" binding="ruleIdLabel">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="3" use-parent-layout="false"/>
                     </constraints>
@@ -122,7 +122,7 @@
                       <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </hspacer>
-                  <component id="a0ea3" class="javax.swing.JLabel">
+                  <component id="a0ea3" class="javax.swing.JLabel" binding="ruleNameLabel">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="3" use-parent-layout="false"/>
                     </constraints>
@@ -132,7 +132,7 @@
                       <text value="Rule Name"/>
                     </properties>
                   </component>
-                  <component id="f7c48" class="javax.swing.JLabel">
+                  <component id="f7c48" class="javax.swing.JLabel" binding="ruleDescriptionLabel">
                     <constraints>
                       <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="3" use-parent-layout="false"/>
                     </constraints>
@@ -142,7 +142,7 @@
                       <text value="Rule Description"/>
                     </properties>
                   </component>
-                  <component id="4aac4" class="javax.swing.JLabel">
+                  <component id="4aac4" class="javax.swing.JLabel" binding="levelLabel">
                     <constraints>
                       <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="3" use-parent-layout="false"/>
                     </constraints>
@@ -156,7 +156,7 @@
                       <verticalTextPosition value="0"/>
                     </properties>
                   </component>
-                  <component id="4a90b" class="javax.swing.JLabel">
+                  <component id="4a90b" class="javax.swing.JLabel" binding="locationLabel">
                     <constraints>
                       <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="3" use-parent-layout="false"/>
                     </constraints>
@@ -166,7 +166,7 @@
                       <text value="Location"/>
                     </properties>
                   </component>
-                  <component id="827" class="javax.swing.JLabel">
+                  <component id="827" class="javax.swing.JLabel" binding="logLabel">
                     <constraints>
                       <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="3" use-parent-layout="false"/>
                     </constraints>
