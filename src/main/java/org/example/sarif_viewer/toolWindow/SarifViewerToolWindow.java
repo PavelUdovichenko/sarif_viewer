@@ -15,7 +15,6 @@ import javax.swing.*;
 import javax.swing.text.Position;
 import javax.swing.tree.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Objects;
 
 import static org.example.sarif_viewer.fileChooser.FileOpen.clickBtn;
@@ -111,8 +110,6 @@ public class SarifViewerToolWindow {
     }
 
     private void tabLocations() {
-        String[] uri = JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
-
         getModelJTree(treeLocations);
 
         treeLocations.getSelectionModel().addTreeSelectionListener(e -> {
