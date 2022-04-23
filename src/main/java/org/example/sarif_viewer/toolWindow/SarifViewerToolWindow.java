@@ -17,6 +17,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static org.example.sarif_viewer.fileChooser.FileOpen.clickBtn;
@@ -46,6 +47,8 @@ public class SarifViewerToolWindow {
         openFileMain.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         openFile.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         openFile.setIcon(AllIcons.Actions.MenuOpen);
+
+        treeLocations.setRootVisible(false);
         treeLocations.setBorder(BorderFactory.createEmptyBorder());
 
         scrollPaneLocaations.setBorder(BorderFactory.createEmptyBorder());
@@ -62,7 +65,6 @@ public class SarifViewerToolWindow {
             if (!Objects.equals(pathFile, "")) {
                 tabLocations();
                 tabRules();
-                tabInfo(); // изменяем по клику (выбору узла) в дереве
             }
         });
 
@@ -81,7 +83,6 @@ public class SarifViewerToolWindow {
 
                 tabLocations();
                 tabRules();
-                tabInfo(); // изменяем по клику (выбору узла) в дереве
             }
         });
     }
@@ -89,32 +90,75 @@ public class SarifViewerToolWindow {
     private void tabLocations() {
         String[] uri = JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
 
-        DefaultMutableTreeNode errorFile = new DefaultMutableTreeNode(uri[uri.length - 1]);
-        errorFile.add(new DefaultMutableTreeNode(JsonParse.parseJson().getRuns().get(0).getResults().get(0).getMessage().getText()));
+        getModelJTree(treeLocations);
 
-        DefaultTreeModel model = (DefaultTreeModel) treeLocations.getModel();
-        model.setRoot(errorFile);
-        treeLocations.setModel(model);
-        DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) treeLocations.getCellRenderer();
+        treeLocations.getSelectionModel().addTreeSelectionListener(e -> {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
 
-        Icon leafIcon;
-
-        if (JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLevel().equals("error"))
-            leafIcon = AllIcons.General.Error;
-        else if (JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLevel().equals("warning"))
-            leafIcon = AllIcons.General.Warning;
-        else if (JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLevel().equals("note"))
-            leafIcon = AllIcons.General.Note;
-        else
-            leafIcon = AllIcons.General.Warning;
-
-        renderer.setLeafIcon(leafIcon);
-        renderer.setClosedIcon(null);
-        renderer.setOpenIcon(null);
+            if (node.isLeaf()) {
+                System.out.println(node);
+                tabInfo();
+            } else {
+                System.out.println(node);
+//                new psiMouseListener(JsonParse.parseJson().getRuns().get(0).getResults().get(0).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri());
+            }
+        });
 
         final TreePath treePath = treeLocations.getNextMatch(uri[uri.length - 1], 0, Position.Bias.Forward);
         if (treePath != null)
             treeLocations.collapsePath(treePath);
+
+        treeLocations.setCellRenderer(new DefaultTreeCellRenderer() {
+            @Override
+            public Component getTreeCellRendererComponent(JTree tree,
+                                                          Object value, boolean selected, boolean expanded,
+                                                          boolean isLeaf, int row, boolean focused) {
+                Component c = super.getTreeCellRendererComponent(tree, value, selected, expanded, isLeaf, row, focused);
+                Object obj = ((DefaultMutableTreeNode) value).getUserObject();
+
+                if (isLeaf) {
+                    System.out.println(obj);
+//                    System.out.println(((DefaultMutableTreeNode) value).getParent());
+                    setIcon(AllIcons.General.Error);
+                } else {
+                    setClosedIcon(null);
+                    setOpenIcon(null);
+                }
+//                    if (levelError != null) {
+//                        switch (levelError) {
+//                            case "error":
+//                                setIcon(AllIcons.General.Error);
+//                                break;
+//                            case "note":
+//                                setIcon(AllIcons.General.Note);
+//                                break;
+//                            default:
+//                                setIcon(AllIcons.General.Warning);
+//                                break;
+//                        }
+//                    } else
+//                        setIcon(AllIcons.General.Warning);
+//                }
+                return c;
+            }
+        });
+    }
+
+    private void getModelJTree(JTree jTree) {
+        DefaultMutableTreeNode parentRoot = new DefaultMutableTreeNode("sarif_view");
+
+        for (int parentsNode = 0; parentsNode < JsonParse.parseJson().getRuns().get(0).getResults().size(); parentsNode++) {
+            String[] uri = JsonParse.parseJson().getRuns().get(0).getResults().get(parentsNode).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
+
+            DefaultMutableTreeNode errorNameFile = new DefaultMutableTreeNode(uri[uri.length - 1]);
+            parentRoot.add(errorNameFile);
+            errorNameFile.add(new DefaultMutableTreeNode(JsonParse.parseJson().getRuns().get(0).getResults().get(parentsNode).getMessage().getText()));
+
+            DefaultTreeModel model = (DefaultTreeModel) this.treeLocations.getModel();
+            model.setRoot(parentRoot);
+
+            jTree.setModel(model);
+        }
     }
 
     private void tabRules() {
