@@ -46,7 +46,6 @@ public class SarifViewerToolWindow {
     private JLabel lblLog;
     private JScrollPane scrollPaneLocaations;
 
-
     public SarifViewerToolWindow(ToolWindow toolWindow) {
         getStyles();
 
