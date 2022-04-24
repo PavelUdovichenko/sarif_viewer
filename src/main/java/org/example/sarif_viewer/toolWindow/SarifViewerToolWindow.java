@@ -48,6 +48,37 @@ public class SarifViewerToolWindow {
 
 
     public SarifViewerToolWindow(ToolWindow toolWindow) {
+        getStyles();
+
+        openFile.addActionListener(e -> {
+            clickBtn();
+
+            if (!Objects.equals(pathFile, "")) {
+                tabLocations();
+                tabRules();
+            }
+        });
+
+        openFileMain.addActionListener(e -> {
+            clickBtn();
+
+            if (!Objects.equals(pathFile, "")) {
+                tabbedPanelUp.setEnabled(true);
+                tabbedPanelUp.setVisible(true);
+                tabbedPanelDown.setEnabled(true);
+                tabbedPanelDown.setVisible(true);
+                toolBar.setEnabled(true);
+                toolBar.setVisible(true);
+                openFileMain.setEnabled(false);
+                openFileMain.setVisible(false);
+
+                tabLocations();
+                tabRules();
+            }
+        });
+    }
+
+    private void getStyles() {
         openFileMain.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         openFile.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         openFile.setIcon(AllIcons.Actions.MenuOpen);
@@ -80,33 +111,6 @@ public class SarifViewerToolWindow {
         lblLog.setVisible(false);
         lblLog.setForeground(JBColor.BLUE);
         lblLog.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-        openFile.addActionListener(e -> {
-            clickBtn();
-
-            if (!Objects.equals(pathFile, "")) {
-                tabLocations();
-                tabRules();
-            }
-        });
-
-        openFileMain.addActionListener(e -> {
-            clickBtn();
-
-            if (!Objects.equals(pathFile, "")) {
-                tabbedPanelUp.setEnabled(true);
-                tabbedPanelUp.setVisible(true);
-                tabbedPanelDown.setEnabled(true);
-                tabbedPanelDown.setVisible(true);
-                toolBar.setEnabled(true);
-                toolBar.setVisible(true);
-                openFileMain.setEnabled(false);
-                openFileMain.setVisible(false);
-
-                tabLocations();
-                tabRules();
-            }
-        });
     }
 
     private void tabLocations() {
@@ -137,33 +141,21 @@ public class SarifViewerToolWindow {
             @Override
             public Component getTreeCellRendererComponent(JTree tree,
                                                           Object value, boolean selected, boolean expanded,
-                                                          boolean isLeaf, int row, boolean focused) {
-                Component c = super.getTreeCellRendererComponent(tree, value, selected, expanded, isLeaf, row, focused);
+                                                          boolean leaf, int row, boolean focused) {
+                Component c = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, focused);
                 Object obj = ((DefaultMutableTreeNode) value).getUserObject();
 
-                if (isLeaf) {
-//                    System.out.println(obj);
-//                    System.out.println(((DefaultMutableTreeNode) value).getParent());
-                    setIcon(AllIcons.General.Error);
+                if (leaf) {
+                    for (int i = 0; i < JsonParse.parseJson().getRuns().get(0).getResults().size(); i++) {
+                        if (JsonParse.parseJson().getRuns().get(0).getResults().get(i).getMessage().getText().contains(obj.toString())) {
+                            setIcon(getIconNode(JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLevel()));
+                            break;
+                        }
+                    }
                 } else {
                     setClosedIcon(null);
                     setOpenIcon(null);
                 }
-//                    if (levelError != null) {
-//                        switch (levelError) {
-//                            case "error":
-//                                setIcon(AllIcons.General.Error);
-//                                break;
-//                            case "note":
-//                                setIcon(AllIcons.General.Note);
-//                                break;
-//                            default:
-//                                setIcon(AllIcons.General.Warning);
-//                                break;
-//                        }
-//                    } else
-//                        setIcon(AllIcons.General.Warning);
-//                }
                 return c;
             }
         });
@@ -187,6 +179,21 @@ public class SarifViewerToolWindow {
             model.setRoot(parentRoot);
 
             jTree.setModel(model);
+        }
+    }
+
+    private Icon getIconNode(String levelError) {
+        if (levelError != null) {
+            switch (levelError) {
+                case "error":
+                    return AllIcons.General.Error;
+                case "note":
+                    return AllIcons.General.Note;
+                default:
+                    return AllIcons.General.Warning;
+            }
+        } else {
+            return AllIcons.General.Warning;
         }
     }
 
