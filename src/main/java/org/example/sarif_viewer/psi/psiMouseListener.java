@@ -5,14 +5,16 @@ import java.awt.event.MouseListener;
 
 public class psiMouseListener implements MouseListener {
     String fileName;
+    Integer[] position;
 
-    public psiMouseListener(String fName) {
+    public psiMouseListener(String fName, Integer[] pos) {
         fileName = fName;
+        position = pos;
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        fileWithPsiElement.psiElement(fileName);
+        fileWithPsiElement.psiElement(fileName, position);
     }
 
     @Override
