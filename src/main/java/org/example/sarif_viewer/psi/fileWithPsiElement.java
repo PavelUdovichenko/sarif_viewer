@@ -4,6 +4,7 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.example.sarif_viewer.Notifier.MyNotifier;
 import org.example.sarif_viewer.fileChooser.GetPathProject;
 
 public class fileWithPsiElement {
@@ -22,6 +23,8 @@ public class fileWithPsiElement {
                 openFileDescriptor.navigate(true);
             } else {
                 System.out.println("file not found"); // сделать красивые уведомления (алерыт внутри idea)
+                System.out.println(fName);
+                MyNotifier.notifyError(project, fName);
             }
         } else {
             System.out.println("project not found"); // сделать красивые уведомления (алерыт внутри idea)
