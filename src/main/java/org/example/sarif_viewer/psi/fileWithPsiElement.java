@@ -7,29 +7,28 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.example.sarif_viewer.Notifier.MyNotifier;
 import org.example.sarif_viewer.fileChooser.GetPathProject;
 
+import java.util.ArrayList;
+
 public class fileWithPsiElement {
-    public static void psiElement(String fName, Integer[] position) {
+    public static void psiElement(String fName, ArrayList<Integer> position) {
         Project project = GetPathProject.getProject(); // получаем проект в котором этот файл существует
 //        String dirPath = Objects.requireNonNull(project).getBasePath(); // получаем путь к текущему проекту
 
         VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(fName); // создаём виртуалочку нашего файла
+
 //        PsiFile psiFile = PsiManager.getInstance(project).findFile(Objects.requireNonNull(vFile)); // создаём psi нашего виратульного
-        Integer startLine = position[0];
-        Integer startColumn = position[1];
+
         // открываем файл в редакторе
         OpenFileDescriptor openFileDescriptor;
         if (project != null) {
             if (vFile != null) {
-                openFileDescriptor = new OpenFileDescriptor(project, vFile, startLine, startColumn);
+                openFileDescriptor = new OpenFileDescriptor(project, vFile, position.get(0), position.get(1));
                 openFileDescriptor.navigate(true);
             } else {
-                System.out.println("file not found"); // сделать красивые уведомления (алерыт внутри idea)
-                System.out.println(fName);
-                MyNotifier.notifyError(project, fName);
+                MyNotifier.notifyError(project, "fName");
             }
         } else {
-            System.out.println("project not found"); // сделать красивые уведомления (алерыт внутри idea)
-            MyNotifier.notifyError(project, fName);
+            MyNotifier.notifyError(null, fName);
         }
     }
 }

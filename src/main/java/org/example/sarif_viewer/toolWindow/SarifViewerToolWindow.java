@@ -18,6 +18,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static org.example.sarif_viewer.fileChooser.FileOpen.clickBtn;
@@ -48,6 +49,8 @@ public class SarifViewerToolWindow {
     private JLabel logLabel;
     private JLabel lblLog;
     private JScrollPane scrollPaneLocaations;
+
+    ArrayList<Integer> position = new ArrayList<>();
 
     public SarifViewerToolWindow(ToolWindow toolWindow) {
         getStyles();
@@ -132,24 +135,10 @@ public class SarifViewerToolWindow {
                 tabInfoClear();
 
                 for (int i = 0; i < JsonParse.parseJson().getRuns().get(0).getResults().size(); i++) {
-                    Integer[] position = new Integer[4];
-                    position[0] = JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine();
-                    position[1] = JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn();
-                    position[2] = JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine();
-                    position[3] = JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn();
-                    if (position[3] == null) {
-                        position[3] = position[2];
-                    }
                     if (JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().contains(node.toString())) {
-                        /*fileWithPsiElement.psiElement(JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                                JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
-                                JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn());
-                        */
                         fileWithPsiElement.psiElement(JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                        position);
-
+                                getPosition(i));
                         break;
-
                     }
                 }
             }
@@ -245,32 +234,22 @@ public class SarifViewerToolWindow {
         lblLvl.setText(Objects.requireNonNullElse(level, "-"));
 
         String[] uri = JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
-        Integer[] position = new Integer[4];
-        position[0] = JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine();
-        position[1] = JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn();
-        position[2] = JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine();
-        position[3] = JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn();
-        if (position[3] == null) {
-            position[3] = position[2];
-        }
-
         locationLabel.setVisible(true);
         lblLoc.setVisible(true);
         lblLoc.setText("<html><u>" + uri[uri.length - 1] + "</u></html>");
-        /*lblLoc.addMouseListener(new psiMouseListener(JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
-                JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn()));
-*/
-        lblLoc.addMouseListener(new psiMouseListener(JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                                                    position));
-        logLabel.setVisible(true);
 
-        Integer[] pos = new Integer[4];
-        pos[0]=10;pos[1]=10;pos[2]=null;pos[3]=null; //check for norm functionality
+        System.out.println("uri " + JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri());
+
+        lblLoc.addMouseListener(new psiMouseListener(JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                getPosition(indexResult)));
+
+        logLabel.setVisible(true);
+//        Integer[] pos = new Integer[4];
+//        pos[0]=10;pos[1]=10;pos[2]=null;pos[3]=null; //check for norm functionality
         lblLog.setVisible(true);
         lblLog.setText("<html><u>" + FileOpen.openFile + "</u></html>");
         lblLog.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        lblLog.addMouseListener(new psiMouseListener(FileOpen.pathFile, pos));
+        lblLog.addMouseListener(new psiMouseListener(FileOpen.pathFile, getPosition(indexResult)));
     }
 
     private void tabInfoClear() {
@@ -296,7 +275,23 @@ public class SarifViewerToolWindow {
         lblLog.setText("");
     }
 
+    private ArrayList<Integer> getPosition(int index) {
+        position.clear();
+        position.add(0, JsonParse.parseJson().getRuns().get(0).getResults().get(index).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine());
+        position.add(1, JsonParse.parseJson().getRuns().get(0).getResults().get(index).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn());
+        position.add(2, JsonParse.parseJson().getRuns().get(0).getResults().get(index).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine());
+        position.add(3, JsonParse.parseJson().getRuns().get(0).getResults().get(index).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn());
+
+        if (position.get(3) == null)
+            position.set(3, position.get(2));
+
+        return position;
+    }
+
     public JPanel getContent() {
         return myToolWindowContent;
     }
 }
+//fileWithPsiElement.psiElement(JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+//        JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
+//        JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn());

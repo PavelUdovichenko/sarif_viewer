@@ -17,13 +17,10 @@ public class physicalLocationKeys {
     public regionKeys getRegion() { return region;}
     public void setRegion(regionKeys region) {this.region = region;}
 
-
     @JsonCreator
     public physicalLocationKeys(@JsonProperty("artifactLocation") artifactLocationKeys artifactLocation,
                                 @JsonProperty("region") regionKeys region) {
         this.artifactLocation = artifactLocation;
         this.region = region;
     }
-
-
 }

@@ -2,12 +2,13 @@ package org.example.sarif_viewer.psi;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 public class psiMouseListener implements MouseListener {
     String fileName;
-    Integer[] position;
+    ArrayList<Integer> position;
 
-    public psiMouseListener(String fName, Integer[] pos) {
+    public psiMouseListener(String fName, ArrayList<Integer> pos) {
         fileName = fName;
         position = pos;
     }
