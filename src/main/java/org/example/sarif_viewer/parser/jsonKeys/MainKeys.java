@@ -1,14 +1,14 @@
-package org.example.sarif_viewer.parser.JsonKeys;
+package org.example.sarif_viewer.parser.jsonKeys;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 
-public class mainKeys {
+public class MainKeys {
     String version;
     String $schema;
-    ArrayList<runsKeys> runs;
+    ArrayList<RunsKeys> runs;
 
     public String getVersion() {
         return version;
@@ -24,17 +24,17 @@ public class mainKeys {
         this.$schema = $schema;
     }
 
-    public ArrayList<runsKeys> getRuns() {
+    public ArrayList<RunsKeys> getRuns() {
         return runs;
     }
-    public void setRuns(ArrayList<runsKeys> runs) {
+    public void setRuns(ArrayList<RunsKeys> runs) {
         this.runs = runs;
     }
 
     @JsonCreator
-    public mainKeys(@JsonProperty("version") String version,
+    public MainKeys(@JsonProperty("version") String version,
                     @JsonProperty("$schema") String $schema,
-                    @JsonProperty("runs") ArrayList<runsKeys> runs) {
+                    @JsonProperty("runs") ArrayList<RunsKeys> runs) {
         this.version = version;
         this.$schema = $schema;
         this.runs = runs;

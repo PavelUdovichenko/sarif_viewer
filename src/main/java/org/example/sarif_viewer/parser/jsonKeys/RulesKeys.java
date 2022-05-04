@@ -1,12 +1,12 @@
-package org.example.sarif_viewer.parser.JsonKeys;
+package org.example.sarif_viewer.parser.jsonKeys;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class rulesKeys {
+public class RulesKeys {
     String id;
     String name;
-    shortDescriptionKeys shortDescription;
+    ShortDescriptionKeys shortDescription;
 
     public String getId() {
         return id;
@@ -22,17 +22,17 @@ public class rulesKeys {
         this.name = name;
     }
 
-    public shortDescriptionKeys getShortDescription() {
+    public ShortDescriptionKeys getShortDescription() {
         return shortDescription;
     }
-    public void setShortDescription(shortDescriptionKeys shortDescription) {
+    public void setShortDescription(ShortDescriptionKeys shortDescription) {
         this.shortDescription = shortDescription;
     }
 
     @JsonCreator
-    public rulesKeys(@JsonProperty("id") String id,
+    public RulesKeys(@JsonProperty("id") String id,
                      @JsonProperty("name") String name,
-                     @JsonProperty("shortDescription") shortDescriptionKeys shortDescription) {
+                     @JsonProperty("shortDescription") ShortDescriptionKeys shortDescription) {
         this.id = id;
         this.name = name;
         this.shortDescription = shortDescription;

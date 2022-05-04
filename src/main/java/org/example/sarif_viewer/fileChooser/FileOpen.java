@@ -8,7 +8,7 @@ public class FileOpen {
     public static String pathFile = "";
     public static String openFile = "";
 
-    public static void clickBtn() {
+    public static void showDlg() {
         String basePathProject = Objects.requireNonNull(GetPathProject.getProject()).getBasePath();
 
         JFileChooser jFileChooser;

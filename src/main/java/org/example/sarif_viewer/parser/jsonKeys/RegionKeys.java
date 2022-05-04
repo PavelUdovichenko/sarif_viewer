@@ -1,9 +1,9 @@
-package org.example.sarif_viewer.parser.JsonKeys;
+package org.example.sarif_viewer.parser.jsonKeys;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class regionKeys {
+public class RegionKeys {
     Integer startLine;
     Integer startColumn;
     Integer endLine;
@@ -22,7 +22,7 @@ public class regionKeys {
     public void setEndColumn(Integer endColumn){this.endColumn = endColumn;}
 
     @JsonCreator
-    public regionKeys(@JsonProperty("startLine") Integer startLine,
+    public RegionKeys(@JsonProperty("startLine") Integer startLine,
                       @JsonProperty("startColumn") Integer startColumn,
                       @JsonProperty("endLine") Integer endLine,
                       @JsonProperty("endColumn") Integer endColumn) {

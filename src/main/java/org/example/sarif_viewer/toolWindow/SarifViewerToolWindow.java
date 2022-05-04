@@ -8,8 +8,8 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.JBColor;
 import org.example.sarif_viewer.fileChooser.FileOpen;
 import org.example.sarif_viewer.parser.JsonParse;
-import org.example.sarif_viewer.psi.fileWithPsiElement;
-import org.example.sarif_viewer.psi.psiMouseListener;
+import org.example.sarif_viewer.psi.FileWithPsiElement;
+import org.example.sarif_viewer.psi.PSIMouseListener;
 
 import javax.swing.*;
 import javax.swing.text.Position;
@@ -21,7 +21,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static org.example.sarif_viewer.fileChooser.FileOpen.clickBtn;
 import static org.example.sarif_viewer.fileChooser.FileOpen.pathFile;
 
 public class SarifViewerToolWindow {
@@ -49,6 +48,7 @@ public class SarifViewerToolWindow {
     private JLabel logLabel;
     private JLabel lblLog;
     private JScrollPane scrollPaneLocaations;
+    private JScrollPane scrollPaneInfo;
 
     ArrayList<Integer> position = new ArrayList<>();
 
@@ -56,7 +56,7 @@ public class SarifViewerToolWindow {
         getStyles();
 
         openFile.addActionListener(e -> {
-            clickBtn();
+            FileOpen.showDlg();
 
             if (!Objects.equals(pathFile, "")) {
                 tabLocations();
@@ -65,7 +65,7 @@ public class SarifViewerToolWindow {
         });
 
         openFileMain.addActionListener(e -> {
-            clickBtn();
+            FileOpen.showDlg();
 
             if (!Objects.equals(pathFile, "")) {
                 tabbedPanelUp.setEnabled(true);
@@ -92,6 +92,7 @@ public class SarifViewerToolWindow {
         treeLocations.setBorder(BorderFactory.createEmptyBorder());
 
         scrollPaneLocaations.setBorder(BorderFactory.createEmptyBorder());
+        scrollPaneInfo.setBorder(BorderFactory.createEmptyBorder());
         tabbedPanelUp.setEnabled(false);
         tabbedPanelUp.setVisible(false);
         tabbedPanelDown.setEnabled(false);
@@ -136,7 +137,7 @@ public class SarifViewerToolWindow {
 
                 for (int i = 0; i < JsonParse.parseJson().getRuns().get(0).getResults().size(); i++) {
                     if (JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().contains(node.toString())) {
-                        fileWithPsiElement.psiElement(JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                        FileWithPsiElement.psiElement(JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
                                 getPosition(i));
                         break;
                     }
@@ -209,6 +210,8 @@ public class SarifViewerToolWindow {
     }
 
     private void tabInfo(int indexResult) {
+        ArrayList<Integer> pos = getPosition(indexResult);
+
         String txtMessage = JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getMessage().getText();
         lblTxtMessage.setVisible(true);
         lblTxtMessage.setText(txtMessage);
@@ -238,10 +241,8 @@ public class SarifViewerToolWindow {
         lblLoc.setVisible(true);
         lblLoc.setText("<html><u>" + uri[uri.length - 1] + "</u></html>");
 
-        System.out.println("uri " + JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri());
-
-        lblLoc.addMouseListener(new psiMouseListener(JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                getPosition(indexResult)));
+        lblLoc.addMouseListener(new PSIMouseListener(JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                pos));
 
         logLabel.setVisible(true);
 //        Integer[] pos = new Integer[4];
@@ -249,7 +250,7 @@ public class SarifViewerToolWindow {
         lblLog.setVisible(true);
         lblLog.setText("<html><u>" + FileOpen.openFile + "</u></html>");
         lblLog.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        lblLog.addMouseListener(new psiMouseListener(FileOpen.pathFile, getPosition(indexResult)));
+        lblLog.addMouseListener(new PSIMouseListener(FileOpen.pathFile, pos));
     }
 
     private void tabInfoClear() {
@@ -285,6 +286,8 @@ public class SarifViewerToolWindow {
         if (position.get(3) == null)
             position.set(3, position.get(2));
 
+        System.out.println(position);
+
         return position;
     }
 
@@ -292,6 +295,7 @@ public class SarifViewerToolWindow {
         return myToolWindowContent;
     }
 }
+
 //fileWithPsiElement.psiElement(JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
 //        JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
 //        JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn());

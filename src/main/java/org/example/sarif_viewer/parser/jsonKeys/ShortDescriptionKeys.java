@@ -1,9 +1,9 @@
-package org.example.sarif_viewer.parser.JsonKeys;
+package org.example.sarif_viewer.parser.jsonKeys;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class shortDescriptionKeys {
+public class ShortDescriptionKeys {
     String text;
 
     public String getText() {
@@ -14,7 +14,7 @@ public class shortDescriptionKeys {
     }
 
     @JsonCreator
-    public shortDescriptionKeys(@JsonProperty("text") String text) {
+    public ShortDescriptionKeys(@JsonProperty("text") String text) {
         this.text = text;
     }
 }

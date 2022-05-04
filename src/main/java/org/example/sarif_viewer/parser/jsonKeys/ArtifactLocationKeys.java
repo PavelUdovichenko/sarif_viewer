@@ -1,9 +1,9 @@
-package org.example.sarif_viewer.parser.JsonKeys;
+package org.example.sarif_viewer.parser.jsonKeys;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class artifactLocationKeys {
+public class ArtifactLocationKeys {
     String uri;
 
     public String getUri() {
@@ -14,7 +14,7 @@ public class artifactLocationKeys {
     }
 
     @JsonCreator
-    public artifactLocationKeys(@JsonProperty("uri") String uri) {
+    public ArtifactLocationKeys(@JsonProperty("uri") String uri) {
         this.uri = uri;
     }
 }

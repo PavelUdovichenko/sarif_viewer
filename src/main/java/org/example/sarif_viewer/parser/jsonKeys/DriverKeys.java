@@ -1,14 +1,14 @@
-package org.example.sarif_viewer.parser.JsonKeys;
+package org.example.sarif_viewer.parser.jsonKeys;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 
-public class driverKeys {
+public class DriverKeys {
     String name;
     String organization;
-    ArrayList<rulesKeys> rules;
+    ArrayList<RulesKeys> rules;
 
     public String getName() {
         return name;
@@ -24,17 +24,17 @@ public class driverKeys {
         this.organization = organization;
     }
 
-    public ArrayList<rulesKeys> getRules() {
+    public ArrayList<RulesKeys> getRules() {
         return rules;
     }
-    public void setRules(ArrayList<rulesKeys> rules) {
+    public void setRules(ArrayList<RulesKeys> rules) {
         this.rules = rules;
     }
 
     @JsonCreator
-    public driverKeys(@JsonProperty("name") String name,
+    public DriverKeys(@JsonProperty("name") String name,
                       @JsonProperty("organization") String organization,
-                      @JsonProperty("rules") ArrayList<rulesKeys> rules) {
+                      @JsonProperty("rules") ArrayList<RulesKeys> rules) {
         this.name = name;
         this.organization = organization;
         this.rules = rules;

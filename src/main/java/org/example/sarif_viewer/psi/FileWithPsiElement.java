@@ -4,12 +4,12 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.example.sarif_viewer.Notifier.MyNotifier;
+import org.example.sarif_viewer.notifier.NotifierNotFoundFile;
 import org.example.sarif_viewer.fileChooser.GetPathProject;
 
 import java.util.ArrayList;
 
-public class fileWithPsiElement {
+public class FileWithPsiElement {
     public static void psiElement(String fName, ArrayList<Integer> position) {
         Project project = GetPathProject.getProject(); // получаем проект в котором этот файл существует
 //        String dirPath = Objects.requireNonNull(project).getBasePath(); // получаем путь к текущему проекту
@@ -25,10 +25,10 @@ public class fileWithPsiElement {
                 openFileDescriptor = new OpenFileDescriptor(project, vFile, position.get(0), position.get(1));
                 openFileDescriptor.navigate(true);
             } else {
-                MyNotifier.notifyError(project, "fName");
+                NotifierNotFoundFile.notifyError(project, fName);
             }
         } else {
-            MyNotifier.notifyError(null, fName);
+            NotifierNotFoundFile.notifyError(null, fName);
         }
     }
 }

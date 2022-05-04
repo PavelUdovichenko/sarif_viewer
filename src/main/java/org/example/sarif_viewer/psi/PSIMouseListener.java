@@ -4,18 +4,18 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
-public class psiMouseListener implements MouseListener {
+public class PSIMouseListener implements MouseListener {
     String fileName;
     ArrayList<Integer> position;
 
-    public psiMouseListener(String fName, ArrayList<Integer> pos) {
+    public PSIMouseListener(String fName, ArrayList<Integer> pos) {
         fileName = fName;
         position = pos;
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        fileWithPsiElement.psiElement(fileName, position);
+        FileWithPsiElement.psiElement(fileName, position);
     }
 
     @Override

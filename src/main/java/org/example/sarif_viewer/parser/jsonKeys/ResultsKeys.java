@@ -1,14 +1,14 @@
-package org.example.sarif_viewer.parser.JsonKeys;
+package org.example.sarif_viewer.parser.jsonKeys;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 
-public class resultsKeys {
+public class ResultsKeys {
     String level;
-    messageKeys message;
-    ArrayList<locationsKeys> locations;
+    MessageKeys message;
+    ArrayList<LocationsKeys> locations;
     String ruleId;
 
     public String getLevel() {
@@ -18,17 +18,17 @@ public class resultsKeys {
         this.level = level;
     }
 
-    public messageKeys getMessage() {
+    public MessageKeys getMessage() {
         return message;
     }
-    public void setMessage(messageKeys message) {
+    public void setMessage(MessageKeys message) {
         this.message = message;
     }
 
-    public ArrayList<locationsKeys> getLocations() {
+    public ArrayList<LocationsKeys> getLocations() {
         return locations;
     }
-    public void setLocations(ArrayList<locationsKeys> locations) {
+    public void setLocations(ArrayList<LocationsKeys> locations) {
         this.locations = locations;
     }
 
@@ -40,9 +40,9 @@ public class resultsKeys {
     }
 
     @JsonCreator
-    public resultsKeys(@JsonProperty("level") String level,
-                       @JsonProperty("message") messageKeys message,
-                       @JsonProperty("locations") ArrayList<locationsKeys> locations,
+    public ResultsKeys(@JsonProperty("level") String level,
+                       @JsonProperty("message") MessageKeys message,
+                       @JsonProperty("locations") ArrayList<LocationsKeys> locations,
                        @JsonProperty("ruleId") String ruleId) {
         this.level = level;
         this.message = message;
