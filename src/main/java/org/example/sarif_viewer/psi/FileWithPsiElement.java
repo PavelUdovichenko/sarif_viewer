@@ -6,8 +6,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
-import org.example.sarif_viewer.notifier.NotifierNotFoundFile;
 import org.example.sarif_viewer.fileChooser.GetPathProject;
+import org.example.sarif_viewer.notifier.ShowNotificationActivity;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -24,15 +24,21 @@ public class FileWithPsiElement {
         // открываем файл в редакторе
         if (project != null) {
             if (virtualFile != null) {
-                OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile, position.get(0), position.get(1));
-                openFileDescriptor.navigate(true);
+                OpenFileDescriptor openFileDescriptor;
 
-                selectedText(project, virtualFile, position);
+                if (position != null) {
+                    openFileDescriptor = new OpenFileDescriptor(project, virtualFile, position.get(0), position.get(1));
+                    openFileDescriptor.navigate(true);
+                    selectedText(project, virtualFile, position);
+                } else {
+                    openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
+                    openFileDescriptor.navigate(true);
+                }
             } else {
-                NotifierNotFoundFile.notifyError(project, fName);
+                ShowNotificationActivity.notifyError(project, fName);
             }
         } else {
-            NotifierNotFoundFile.notifyError(null, fName);
+            ShowNotificationActivity.notifyError(project, fName);
         }
     }
 

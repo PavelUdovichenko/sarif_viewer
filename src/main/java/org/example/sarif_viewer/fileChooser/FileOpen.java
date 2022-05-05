@@ -1,5 +1,7 @@
 package org.example.sarif_viewer.fileChooser;
 
+import org.example.sarif_viewer.psi.FileWithPsiElement;
+
 import javax.swing.*;
 import java.io.File;
 import java.util.Objects;
@@ -8,7 +10,7 @@ public class FileOpen {
     public static String pathFile = "";
     public static String openFile = "";
 
-    public static void showDlg() {
+    public static void showDlg(String extension, String description, boolean checkNotification) {
         String basePathProject = Objects.requireNonNull(GetPathProject.getProject()).getBasePath();
 
         JFileChooser jFileChooser;
@@ -22,7 +24,7 @@ public class FileOpen {
         jFileChooser.setDialogTitle("Open file");
 
         // Определяем фильтры типов файлов
-        FileFilterExt ff = new FileFilterExt("sarif", "SARIF-Files (*.sarif)");
+        FileFilterExt ff = new FileFilterExt(extension, description);
         jFileChooser.setAcceptAllFileFilterUsed(false);
         jFileChooser.setFileFilter(ff);
 
@@ -35,6 +37,10 @@ public class FileOpen {
         if (result == JFileChooser.APPROVE_OPTION ) {
             pathFile = jFileChooser.getSelectedFile().toString();
             openFile = jFileChooser.getSelectedFile().getName();
+        }
+
+        if (checkNotification) {
+            FileWithPsiElement.psiElement(pathFile, null);
         }
     }
 }

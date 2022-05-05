@@ -56,7 +56,7 @@ public class SarifViewerToolWindow {
         getStyles();
 
         openFile.addActionListener(e -> {
-            FileOpen.showDlg();
+            FileOpen.showDlg("sarif", "SARIF-Files (*.sarif)", false);
 
             if (!Objects.equals(pathFile, "")) {
                 tabLocations();
@@ -65,7 +65,7 @@ public class SarifViewerToolWindow {
         });
 
         openFileMain.addActionListener(e -> {
-            FileOpen.showDlg();
+            FileOpen.showDlg("sarif", "SARIF-Files (*.sarif)", false);
 
             if (!Objects.equals(pathFile, "")) {
                 tabbedPanelUp.setEnabled(true);
