@@ -20,6 +20,7 @@ public class NotifierNotFoundFile {
                         content,
                         "Source: sarif viewer (Extension)",
                         NotificationType.INFORMATION);
+
         msg.notify(project);
     }
 }

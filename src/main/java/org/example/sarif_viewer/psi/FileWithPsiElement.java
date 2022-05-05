@@ -28,12 +28,10 @@ public class FileWithPsiElement {
                 openFileDescriptor.navigate(true);
 
                 selectedText(project, virtualFile, position);
-            } else {
+            } else
                 NotifierNotFoundFile.notifyError(project, fName);
-            }
-        } else {
+        } else
             NotifierNotFoundFile.notifyError(null, fName);
-        }
     }
 
     private static void selectedText(Project project, VirtualFile virtualFile, ArrayList<Integer> position) {
