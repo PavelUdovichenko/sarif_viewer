@@ -32,7 +32,7 @@ public class FileWithPsiElement {
                     selectedText(project, virtualFile, position);
                 } else {
                     openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
-                    openFileDescriptor.navigate(true);
+                    openFileDescriptor.navigate(false);
                 }
             } else {
                 ShowNotificationActivity.notifyError(project, fName);

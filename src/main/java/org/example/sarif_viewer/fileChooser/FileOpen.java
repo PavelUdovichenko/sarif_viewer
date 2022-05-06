@@ -35,12 +35,12 @@ public class FileOpen {
 
         // Если файл выбран, покажем его в сообщении
         if (result == JFileChooser.APPROVE_OPTION ) {
-            pathFile = jFileChooser.getSelectedFile().toString();
-            openFile = jFileChooser.getSelectedFile().getName();
-        }
-
-        if (checkNotification) {
-            FileWithPsiElement.psiElement(pathFile, null);
+            if (checkNotification)
+                FileWithPsiElement.psiElement(jFileChooser.getSelectedFile().toString(), null);
+            else {
+                pathFile = jFileChooser.getSelectedFile().toString();
+                openFile = jFileChooser.getSelectedFile().getName();
+            }
         }
     }
 }

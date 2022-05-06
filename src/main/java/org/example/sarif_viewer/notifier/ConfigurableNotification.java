@@ -16,7 +16,6 @@ class ConfigurableNotification extends Notification {
         setTitle(config.title, config.subtitle);
         setContent(config.content);
         setIcon(config.icon);
-        setImportant(config.isImportant);
 
         if (config.dropdownText != null)
             setDropDownText(config.dropdownText);

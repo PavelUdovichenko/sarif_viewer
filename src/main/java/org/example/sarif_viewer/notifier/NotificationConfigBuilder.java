@@ -15,8 +15,8 @@ import javax.swing.*;
 import java.util.List;
 
 class NotificationConfigBuilder {
-    private static final NotificationGroup STICKY_GROUP = new NotificationGroup("demo.notifications.balloon", NotificationDisplayType.STICKY_BALLOON, true);
-    private static final NotificationGroup BALLOON_GROUP = new NotificationGroup("demo.notifications.stickyBalloon", NotificationDisplayType.BALLOON, true);
+    private static final NotificationGroup BALLOON_GROUP =
+            new NotificationGroup("demo.notifications.stickyBalloon", NotificationDisplayType.BALLOON, true);
 
     private final Project project;
 
@@ -31,11 +31,8 @@ class NotificationConfigBuilder {
     private Notification.CollapseActionsDirection collapseDirection;
     @Nullable
     private Icon icon;
-    private boolean actionIcons;
     @NotNull
     private NotificationGroup group = BALLOON_GROUP;
-    private boolean isFullContent;
-    private boolean isImportant;
     @NotNull
     private NotificationType notificationType = NotificationType.INFORMATION;
     private List<AnAction> actions = Lists.newArrayList();
@@ -59,10 +56,7 @@ class NotificationConfigBuilder {
         b.dropdownText = config.dropdownText;
         b.collapseDirection = config.collapseDirection;
         b.icon = config.icon;
-        b.actionIcons = config.actionIcons;
         b.group = config.group;
-        b.isFullContent = config.isFullContent;
-        b.isImportant = config.isImportant;
         b.notificationType = config.notificationType;
         b.contextHelpAction = config.contextHelpAction;
 
@@ -99,24 +93,12 @@ class NotificationConfigBuilder {
         this.group = group;
     }
 
-    public void setFullContent(boolean fullContent) {
-        isFullContent = fullContent;
-    }
-
-    public void setImportant(boolean important) {
-        isImportant = important;
-    }
-
     public void setNotificationType(@NotNull NotificationType notificationType) {
         this.notificationType = notificationType;
     }
 
     public void addAction(AnAction actions) {
         this.actions.add(actions);
-    }
-
-    public void setActionIcons(boolean actionIcons) {
-        this.actionIcons = actionIcons;
     }
 
     public void setContextHelpAction(@Nullable AnAction contextHelpAction) {
@@ -132,17 +114,11 @@ class NotificationConfigBuilder {
                 collapseDirection,
                 icon,
                 group,
-                isFullContent,
-                isImportant,
                 notificationType,
                 actions,
-                actionIcons,
                 contextHelpAction
         );
 
-        if (this.isFullContent) {
-            return new FullContentConfigurableNotification(config);
-        }
         return new ConfigurableNotification(config);
     }
 
@@ -158,7 +134,7 @@ class NotificationConfigBuilder {
 
         addAction(ConfigurableNotificationAction.create(
                 builder -> {
-                    String filterExt = subtitle.toString().split("\\.")[1];
+                    String filterExt = subtitle.split("\\.")[1];
                     FileOpen.showDlg(filterExt, filterExt.toUpperCase() + "-Files (*." + filterExt + ")", true);
                 })
         );

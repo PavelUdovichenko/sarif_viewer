@@ -28,11 +28,8 @@ class NotificationConfig {
     final Notification.CollapseActionsDirection collapseDirection;
     @Nullable
     final Icon icon;
-    final boolean actionIcons;
     @NotNull
     final NotificationGroup group;
-    final boolean isFullContent;
-    final boolean isImportant;
     @NotNull
     final NotificationType notificationType;
     @Nullable
@@ -40,19 +37,15 @@ class NotificationConfig {
 
     NotificationConfig(@NotNull String title, String subtitle, @NotNull String content, @Nullable String dropdownText,
                        @Nullable Notification.CollapseActionsDirection collapseDirection, @Nullable Icon icon,
-                       @NotNull NotificationGroup group, boolean isFullContent, boolean isImportant,
-                       @NotNull NotificationType notificationType, @NotNull List<AnAction> actions,
-                       boolean actionIcons, @Nullable AnAction contextHelpAction) {
+                       @NotNull NotificationGroup group, @NotNull NotificationType notificationType,
+                       @NotNull List<AnAction> actions, @Nullable AnAction contextHelpAction) {
         this.title = title;
         this.subtitle = subtitle;
         this.content = content;
         this.dropdownText = dropdownText;
         this.collapseDirection = collapseDirection;
         this.icon = icon;
-        this.actionIcons = actionIcons;
         this.group = group;
-        this.isFullContent = isFullContent;
-        this.isImportant = isImportant;
         this.notificationType = notificationType;
         this.contextHelpAction = contextHelpAction;
         this.actions.addAll(actions);
