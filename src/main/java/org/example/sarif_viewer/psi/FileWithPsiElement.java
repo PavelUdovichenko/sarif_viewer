@@ -29,29 +29,51 @@ public class FileWithPsiElement {
                 if (position != null) {
                     openFileDescriptor = new OpenFileDescriptor(project, virtualFile, position.get(0), position.get(1));
                     openFileDescriptor.navigate(true);
-                    selectedText(project, virtualFile, position);
+                    if (position.get(2) != null || position.get(3) != null)
+                        selectedText(project, virtualFile, position);
                 } else {
                     openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
                     openFileDescriptor.navigate(false);
                 }
-            } else {
+            } else
                 ShowNotificationActivity.notifyError(project, fName);
-            }
-        } else {
+        } else
             ShowNotificationActivity.notifyError(project, fName);
-        }
     }
 
     private static void selectedText(Project project, VirtualFile virtualFile, ArrayList<Integer> position) {
-        TextAttributes textattributes = new TextAttributes(null, JBColor.ORANGE, null, EffectType.LINE_UNDERSCORE, Font.PLAIN);
+        TextAttributes textattributes = new TextAttributes(null, null, JBColor.RED, EffectType.WAVE_UNDERSCORE, Font.PLAIN);
         FileEditor[] editors = FileEditorManager.getInstance(project).getEditors(virtualFile);
 
-        // придумать как выделять диапозон строк (от столбца в строке, до другого столбца в другой строке)
         for (FileEditor editor : editors) {
             MarkupModel markupModel = ((TextEditor) editor).getEditor().getMarkupModel();
-            // пример как выглядит выделение
-            markupModel.addRangeHighlighter(position.get(1), position.get(3), HighlighterLayer.WARNING, textattributes, HighlighterTargetArea.EXACT_RANGE);
-            markupModel.addLineHighlighter(position.get(0), HighlighterLayer.CARET_ROW, textattributes);
+            ArrayList<Integer> offSetPosition = getPositionHighlighter(markupModel.getDocument().getText().split("\n"), position);
+            markupModel.addRangeHighlighter(offSetPosition.get(0), offSetPosition.get(1), HighlighterLayer.ELEMENT_UNDER_CARET, textattributes, HighlighterTargetArea.EXACT_RANGE);
         }
+    }
+
+    private static ArrayList<Integer> getPositionHighlighter(String[] markMdl, ArrayList<Integer> position) {
+        ArrayList<Integer> offSet = new ArrayList<>();
+        int startOffSet = 0, endOffSet = 0;
+
+        for (int i = 0; i < markMdl.length; i++) {
+            if (i + 1 < position.get(0)) {
+                startOffSet += markMdl[i].length() + 1;
+                endOffSet = startOffSet;
+            } else if (i + 1 < position.get(2))
+                endOffSet += markMdl[i].length() + 1;
+            else {
+                startOffSet += position.get(1) - 1;
+
+                endOffSet += Math.min(markMdl[i].length(), position.get(3) - 1);
+
+                break;
+            }
+        }
+
+        offSet.add(0, startOffSet);
+        offSet.add(1, endOffSet);
+
+        return offSet;
     }
 }
