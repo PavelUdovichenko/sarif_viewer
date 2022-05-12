@@ -3,9 +3,9 @@ package org.example.sarif_viewer.parser.jsonKeys;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class LocationsKeys {
+public class LocationKeys {
     PhysicalLocationKeys physicalLocation;
-    LocationKeys location;
+    MessageKeys message;
 
     public PhysicalLocationKeys getPhysicalLocation() {
         return physicalLocation;
@@ -14,17 +14,17 @@ public class LocationsKeys {
         this.physicalLocation = physicalLocation;
     }
 
-    public LocationKeys getLocation() {
-        return location;
+    public MessageKeys getMessage() {
+        return message;
     }
-    public void setLocation(LocationKeys location) {
-        this.location = location;
+    public void setMessage(MessageKeys message) {
+        this.message = message;
     }
 
     @JsonCreator
-    public LocationsKeys(@JsonProperty("physicalLocation") PhysicalLocationKeys physicalLocation,
-                        @JsonProperty("location") LocationKeys location) {
+    public LocationKeys(@JsonProperty("physicalLocation") PhysicalLocationKeys physicalLocation,
+                         @JsonProperty("message") MessageKeys message) {
         this.physicalLocation = physicalLocation;
-        this.location = location;
+        this.message = message;
     }
 }

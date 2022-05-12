@@ -6,16 +6,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 
 public class ResultsKeys {
-    String level;
-    MessageKeys message;
-    ArrayList<LocationsKeys> locations;
     String ruleId;
+    MessageKeys message;
+    String level;
+    ArrayList<LocationsKeys> locations;
+    ArrayList<RelatedLocationsKeys> relatedLocations;
+    ArrayList<CodeFlowsKeys> codeFlows;
 
-    public String getLevel() {
-        return level;
+
+    public String getRuleId() {
+        return ruleId;
     }
-    public void setLevel(String level) {
-        this.level = level;
+    public void setRuleId(String ruleId) {
+        this.ruleId = ruleId;
     }
 
     public MessageKeys getMessage() {
@@ -25,6 +28,13 @@ public class ResultsKeys {
         this.message = message;
     }
 
+    public String getLevel() {
+        return level;
+    }
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
     public ArrayList<LocationsKeys> getLocations() {
         return locations;
     }
@@ -32,21 +42,32 @@ public class ResultsKeys {
         this.locations = locations;
     }
 
-    public String getRuleId() {
-        return ruleId;
+    public ArrayList<RelatedLocationsKeys> getRelatedLocations() {
+        return relatedLocations;
     }
-    public void setRuleId(String ruleId) {
-        this.ruleId = ruleId;
+    public void setRelatedLocations(ArrayList<RelatedLocationsKeys> relatedLocations) {
+        this.relatedLocations = relatedLocations;
+    }
+
+    public ArrayList<CodeFlowsKeys> getCodeFlows() {
+        return codeFlows;
+    }
+    public void setCodeFlows(ArrayList<CodeFlowsKeys> codeFlows) {
+        this.codeFlows = codeFlows;
     }
 
     @JsonCreator
-    public ResultsKeys(@JsonProperty("level") String level,
+    public ResultsKeys(@JsonProperty("ruleId") String ruleId,
                        @JsonProperty("message") MessageKeys message,
+                       @JsonProperty("level") String level,
                        @JsonProperty("locations") ArrayList<LocationsKeys> locations,
-                       @JsonProperty("ruleId") String ruleId) {
-        this.level = level;
-        this.message = message;
-        this.locations = locations;
+                       @JsonProperty("relatedLocations") ArrayList<RelatedLocationsKeys> relatedLocations,
+                       @JsonProperty("codeFlows") ArrayList<CodeFlowsKeys> codeFlows) {
         this.ruleId = ruleId;
+        this.message = message;
+        this.level = level;
+        this.locations = locations;
+        this.relatedLocations = relatedLocations;
+        this.codeFlows = codeFlows;
     }
 }

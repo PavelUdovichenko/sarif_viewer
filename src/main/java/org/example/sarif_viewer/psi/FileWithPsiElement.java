@@ -15,11 +15,8 @@ import java.util.ArrayList;
 public class FileWithPsiElement {
     public static void psiElement(String fName, ArrayList<Integer> position) {
         Project project = GetPathProject.getProject(); // получаем проект в котором этот файл существует
-//        String dirPath = Objects.requireNonNull(project).getBasePath(); // получаем путь к текущему проекту
 
         VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(fName); // создаём виртуалочку нашего файла
-
-//        PsiFile psiFile = PsiManager.getInstance(project).findFile(Objects.requireNonNull(vFile)); // создаём psi нашего виратульного
 
         // открываем файл в редакторе
         if (project != null) {
@@ -43,6 +40,8 @@ public class FileWithPsiElement {
 
     private static void selectedText(Project project, VirtualFile virtualFile, ArrayList<Integer> position) {
         TextAttributes textattributes = new TextAttributes(null, null, JBColor.RED, EffectType.WAVE_UNDERSCORE, Font.PLAIN);
+
+//        TextAttributes textattributes = new TextAttributes(null, null, JBColor.YELLOW, EffectType.BOXED, Font.PLAIN);
         FileEditor[] editors = FileEditorManager.getInstance(project).getEditors(virtualFile);
 
         for (FileEditor editor : editors) {

@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PhysicalLocationKeys {
-    ArtifactLocationKeys artifactLocation;
     RegionKeys region;
+    ArtifactLocationKeys artifactLocation;
+
+    public RegionKeys getRegion() { return region;}
+    public void setRegion(RegionKeys region) {this.region = region;}
 
     public ArtifactLocationKeys getArtifactLocation() {
         return artifactLocation;
@@ -14,13 +17,10 @@ public class PhysicalLocationKeys {
         this.artifactLocation = artifactLocation;
     }
 
-    public RegionKeys getRegion() { return region;}
-    public void setRegion(RegionKeys region) {this.region = region;}
-
     @JsonCreator
-    public PhysicalLocationKeys(@JsonProperty("artifactLocation") ArtifactLocationKeys artifactLocation,
-                                @JsonProperty("region") RegionKeys region) {
-        this.artifactLocation = artifactLocation;
+    public PhysicalLocationKeys(@JsonProperty("region") RegionKeys region,
+                                @JsonProperty("artifactLocation") ArtifactLocationKeys artifactLocation) {
         this.region = region;
+        this.artifactLocation = artifactLocation;
     }
 }
