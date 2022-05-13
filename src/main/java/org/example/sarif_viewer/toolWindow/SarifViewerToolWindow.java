@@ -7,6 +7,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.JBColor;
 import org.example.sarif_viewer.fileChooser.FileOpen;
+import org.example.sarif_viewer.fileChooser.GetPathProject;
 import org.example.sarif_viewer.parser.JsonParse;
 import org.example.sarif_viewer.psi.FileWithPsiElement;
 import org.example.sarif_viewer.psi.PSIMouseListener;
@@ -143,8 +144,9 @@ public class SarifViewerToolWindow {
                 }
             } else {
                 tabInfoClear();
-
                 for (int i = 0; i < JsonParse.parseJson().getRuns().get(0).getResults().size(); i++) {
+                    //заготовка под относительный путь
+                    String uri[] = JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
                     if (JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().contains(node.toString())) {
                         FileWithPsiElement.psiElement(JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
                                 getPosition(JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
@@ -155,7 +157,9 @@ public class SarifViewerToolWindow {
                     }
                 }
             }
+
         });
+
 
         treeLocations.setCellRenderer(new DefaultTreeCellRenderer() {
             @Override
@@ -164,7 +168,6 @@ public class SarifViewerToolWindow {
                                                           boolean leaf, int row, boolean focused) {
                 Component c = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, focused);
                 Object obj = ((DefaultMutableTreeNode) value).getUserObject();
-
                 if (leaf) {
                     for (int i = 0; i < JsonParse.parseJson().getRuns().get(0).getResults().size(); i++) {
                         if (JsonParse.parseJson().getRuns().get(0).getResults().get(i).getMessage().getText().contains(obj.toString())) {
@@ -250,19 +253,27 @@ public class SarifViewerToolWindow {
         levelLabel.setVisible(true);
         lblLvl.setVisible(true);
         lblLvl.setText(Objects.requireNonNullElse(level, "-"));
-
+        String pName = GetPathProject.getProject().getName();
+        String[] puri = JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split(pName+"/");
         String[] uri = JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
         locationLabel.setVisible(true);
         lblLoc.setVisible(true);
         lblLoc.setText("<html><u>" + uri[uri.length - 1] + "</u></html>");
         lblLoc.addMouseListener(new PSIMouseListener(JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                pos));
+                pos));//выдаёт ошибку потому что тут передаётся абсолютный путь а у нас поиск по относительному
+        //поэтому я просто передам сразу относительный пускай ищет имя файла в проекте
+        //lblLoc.addMouseListener(new PSIMouseListener(uri, pos));
 
+        ArrayList<Integer> logpos = new ArrayList<>();
+        logpos.add(0,1);
+        logpos.add(1,1);
+        logpos.add(2,null);
+        logpos.add(3,null);
         logLabel.setVisible(true);
         lblLog.setVisible(true);
         lblLog.setText("<html><u>" + FileOpen.openFile + "</u></html>");
         lblLog.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        lblLog.addMouseListener(new PSIMouseListener(FileOpen.pathFile, pos));
+        lblLog.addMouseListener(new PSIMouseListener(FileOpen.pathFile, logpos));
     }
 
     private void tabInfoClear() {
@@ -329,9 +340,25 @@ public class SarifViewerToolWindow {
         position.add(1, startColumn);
         position.add(2, endLine);
         position.add(3, endColumn);
-
+        // если ничего не надо то просто открываем на начале файла
+        /*if (position.get(0) == null) {
+            position.set(0, 0);
+            position.set(1, 0);
+            position.set(2, 0);
+            position.set(3, 0);
+        }*/
+        // если есть только нач. строка то начнём с начала строки и закончим в конце (выделим всю строку)
+        if (position.get(1) == null) {
+            position.set(1, position.get(0));
+            position.set(2, position.get(0) + 1);
+            position.set(3, 0);
+        }
+        // если есть начальные строка и колонна но нет ничего остального, всё остальное повторим со стартовым
+        if (position.get(2) == null)
+            position.set(2, position.get(0));
         if (position.get(3) == null)
-            position.set(3, position.get(2));
+            if(position.get(1) != null)
+            position.set(3, position.get(1) + 1);
 
         return position;
     }

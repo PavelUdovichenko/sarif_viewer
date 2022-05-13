@@ -1,7 +1,10 @@
 package org.example.sarif_viewer.psi;
 
 import com.intellij.openapi.editor.markup.*;
-import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -15,8 +18,10 @@ import java.util.ArrayList;
 public class FileWithPsiElement {
     public static void psiElement(String fName, ArrayList<Integer> position) {
         Project project = GetPathProject.getProject(); // получаем проект в котором этот файл существует
+        String newfName = fName.replace("/","\\");
+        newfName = newfName.replace("file:\\\\\\","");
 
-        VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(fName); // создаём виртуалочку нашего файла
+        VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(newfName); // создаём виртуалочку нашего файла;
 
         // открываем файл в редакторе
         if (project != null) {
@@ -34,6 +39,9 @@ public class FileWithPsiElement {
                 }
             } else
                 ShowNotificationActivity.notifyError(project, fName);
+                System.out.println("fName " + newfName);
+                System.out.println("vFile" + virtualFile);
+                System.out.println(project);
         } else
             ShowNotificationActivity.notifyError(project, fName);
     }
