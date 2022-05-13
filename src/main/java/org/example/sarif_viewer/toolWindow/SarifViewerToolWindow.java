@@ -7,8 +7,8 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.JBColor;
 import org.example.sarif_viewer.fileChooser.FileOpen;
-import org.example.sarif_viewer.fileChooser.GetPathProject;
 import org.example.sarif_viewer.parser.JsonParse;
+import org.example.sarif_viewer.parser.jsonKeys.MainKeys;
 import org.example.sarif_viewer.psi.FileWithPsiElement;
 import org.example.sarif_viewer.psi.PSIMouseListener;
 
@@ -58,6 +58,8 @@ public class SarifViewerToolWindow {
     private JPanel messageAnalysisSteps;
     private JList<String> listSteps;
 
+    private MainKeys mainKeys;
+
     ArrayList<Integer> position = new ArrayList<>();
 
     public SarifViewerToolWindow(ToolWindow toolWindow) {
@@ -67,6 +69,8 @@ public class SarifViewerToolWindow {
             FileOpen.showDlg("sarif", "SARIF-Files (*.sarif)", false);
 
             if (!Objects.equals(pathFile, "")) {
+                mainKeys = JsonParse.parseJson();
+
                 tabLocations();
                 tabRules();
             }
@@ -74,8 +78,9 @@ public class SarifViewerToolWindow {
 
         openFileMain.addActionListener(e -> {
             FileOpen.showDlg("sarif", "SARIF-Files (*.sarif)", false);
-
             if (!Objects.equals(pathFile, "")) {
+                mainKeys = JsonParse.parseJson();
+
                 tabbedPanelUp.setEnabled(true);
                 tabbedPanelUp.setVisible(true);
                 tabbedPanelDown.setEnabled(true);
@@ -136,7 +141,7 @@ public class SarifViewerToolWindow {
 
             if (node.isLeaf()) {
                 for (int i = 0; i < JsonParse.parseJson().getRuns().get(0).getResults().size(); i++) {
-                    if (JsonParse.parseJson().getRuns().get(0).getResults().get(i).getMessage().getText().equals(node.toString())) {
+                    if (mainKeys.getRuns().get(0).getResults().get(i).getMessage().getText().equals(node.toString())) {
                         tabInfo(i);
                         tabAnalisysSteps(i);
                         break;
@@ -144,15 +149,15 @@ public class SarifViewerToolWindow {
                 }
             } else {
                 tabInfoClear();
-                for (int i = 0; i < JsonParse.parseJson().getRuns().get(0).getResults().size(); i++) {
+                for (int i = 0; i < mainKeys.getRuns().get(0).getResults().size(); i++) {
                     //заготовка под относительный путь
-                    String uri[] = JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
-                    if (JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().contains(node.toString())) {
-                        FileWithPsiElement.psiElement(JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                                getPosition(JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
-                                        JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
-                                        JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
-                                        JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
+                    String uri[] = mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
+                    if (mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().contains(node.toString())) {
+                        FileWithPsiElement.psiElement(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                                getPosition(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
+                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
+                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
+                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
                         break;
                     }
                 }
@@ -169,9 +174,9 @@ public class SarifViewerToolWindow {
                 Component c = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, focused);
                 Object obj = ((DefaultMutableTreeNode) value).getUserObject();
                 if (leaf) {
-                    for (int i = 0; i < JsonParse.parseJson().getRuns().get(0).getResults().size(); i++) {
-                        if (JsonParse.parseJson().getRuns().get(0).getResults().get(i).getMessage().getText().contains(obj.toString())) {
-                            setIcon(getIconNode(JsonParse.parseJson().getRuns().get(0).getResults().get(i).getLevel()));
+                    for (int i = 0; i < mainKeys.getRuns().get(0).getResults().size(); i++) {
+                        if (mainKeys.getRuns().get(0).getResults().get(i).getMessage().getText().contains(obj.toString())) {
+                            setIcon(getIconNode(mainKeys.getRuns().get(0).getResults().get(i).getLevel()));
                             break;
                         }
                     }
@@ -191,12 +196,12 @@ public class SarifViewerToolWindow {
     private void getModelJTree(JTree jTree) {
         DefaultMutableTreeNode parentRoot = new DefaultMutableTreeNode("sarif_view");
 
-        for (int parentsNode = 0; parentsNode < JsonParse.parseJson().getRuns().get(0).getResults().size(); parentsNode++) {
-            String[] uri = JsonParse.parseJson().getRuns().get(0).getResults().get(parentsNode).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
+        for (int parentsNode = 0; parentsNode < mainKeys.getRuns().get(0).getResults().size(); parentsNode++) {
+            String[] uri = mainKeys.getRuns().get(0).getResults().get(parentsNode).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
 
             DefaultMutableTreeNode errorNameFile = new DefaultMutableTreeNode(uri[uri.length - 1]);
             parentRoot.add(errorNameFile);
-            errorNameFile.add(new DefaultMutableTreeNode(JsonParse.parseJson().getRuns().get(0).getResults().get(parentsNode).getMessage().getText()));
+            errorNameFile.add(new DefaultMutableTreeNode(mainKeys.getRuns().get(0).getResults().get(parentsNode).getMessage().getText()));
 
             DefaultTreeModel model = (DefaultTreeModel) this.treeLocations.getModel();
             model.setRoot(parentRoot);
@@ -225,41 +230,39 @@ public class SarifViewerToolWindow {
     }
 
     private void tabInfo(int indexResult) {
-        ArrayList<Integer> pos = getPosition(JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
-                JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
-                JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
-                JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn());
+        ArrayList<Integer> pos = getPosition(mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
+                mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
+                mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
+                mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn());
 
-        String txtMessage = JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getMessage().getText();
+        String txtMessage = mainKeys.getRuns().get(0).getResults().get(indexResult).getMessage().getText();
         lblTxtMessage.setVisible(true);
         lblTxtMessage.setText(txtMessage);
 
-        String ruleId = JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getRuleId();
+        String ruleId = mainKeys.getRuns().get(0).getResults().get(indexResult).getRuleId();
         ruleIdLabel.setVisible(true);
         lblRulId.setVisible(true);
         lblRulId.setText(Objects.requireNonNullElse(ruleId, "-"));
 
-        String ruleName = JsonParse.parseJson().getRuns().get(0).getTool().getDriver().getRules().get(0).getName();
+        String ruleName = mainKeys.getRuns().get(0).getTool().getDriver().getRules().get(0).getName();
         ruleNameLabel.setVisible(true);
         lblRulName.setVisible(true);
         lblRulName.setText(Objects.requireNonNullElse(ruleName, "-"));
 
-        String ruleDescription = JsonParse.parseJson().getRuns().get(0).getTool().getDriver().getRules().get(0).getShortDescription().getText();
+        String ruleDescription = mainKeys.getRuns().get(0).getTool().getDriver().getRules().get(0).getShortDescription().getText();
         ruleDescriptionLabel.setVisible(true);
         lblRulDes.setVisible(true);
         lblRulDes.setText(Objects.requireNonNullElse(ruleDescription, "-"));
 
-        String level = JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLevel();
+        String level = mainKeys.getRuns().get(0).getResults().get(indexResult).getLevel();
         levelLabel.setVisible(true);
         lblLvl.setVisible(true);
         lblLvl.setText(Objects.requireNonNullElse(level, "-"));
-        String pName = GetPathProject.getProject().getName();
-        String[] puri = JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split(pName+"/");
-        String[] uri = JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
+        String[] uri = mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
         locationLabel.setVisible(true);
         lblLoc.setVisible(true);
         lblLoc.setText("<html><u>" + uri[uri.length - 1] + "</u></html>");
-        lblLoc.addMouseListener(new PSIMouseListener(JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+        lblLoc.addMouseListener(new PSIMouseListener(mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
                 pos));//выдаёт ошибку потому что тут передаётся абсолютный путь а у нас поиск по относительному
         //поэтому я просто передам сразу относительный пускай ищет имя файла в проекте
         //lblLoc.addMouseListener(new PSIMouseListener(uri, pos));
@@ -307,9 +310,9 @@ public class SarifViewerToolWindow {
 
         if (JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getCodeFlows() != null) {
             scrollPaneAnalysisSteps.setVisible(true);
-            for (int analisysStep = 0; analisysStep < JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().size(); analisysStep++) {
-                if (JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(analisysStep).getLocation().getMessage() != null)
-                    defaultListModel.addElement(JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(analisysStep).getLocation().getMessage().getText());
+            for (int analisysStep = 0; analisysStep < mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().size(); analisysStep++) {
+                if (mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(analisysStep).getLocation().getMessage() != null)
+                    defaultListModel.addElement(mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(analisysStep).getLocation().getMessage().getText());
                 else
                     defaultListModel.addElement("-");
             }
@@ -325,11 +328,11 @@ public class SarifViewerToolWindow {
                 int selected = listSteps.locationToIndex(e.getPoint());
                 System.out.println(selected);
 
-                FileWithPsiElement.psiElement(JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                        getPosition(JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getStartLine(),
-                                JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getStartColumn(),
-                                JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getEndLine(),
-                                JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getEndColumn()));
+                FileWithPsiElement.psiElement(mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                        getPosition(mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getStartLine(),
+                                mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getStartColumn(),
+                                mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getEndLine(),
+                                mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getEndColumn()));
             }
         });
     }
