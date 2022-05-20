@@ -7,6 +7,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.JBColor;
 import org.example.sarif_viewer.fileChooser.FileOpen;
+import org.example.sarif_viewer.fileChooser.GetPathProject;
 import org.example.sarif_viewer.parser.JsonParse;
 import org.example.sarif_viewer.parser.jsonKeys.MainKeys;
 import org.example.sarif_viewer.psi.FileWithPsiElement;
@@ -139,19 +140,25 @@ public class SarifViewerToolWindow {
         treeLocations.getSelectionModel().addTreeSelectionListener(e -> {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
 
-            if (node.isLeaf()) {
-                for (int i = 0; i < JsonParse.parseJson().getRuns().get(0).getResults().size(); i++) {
+            //if (node.isLeaf()) {
+            for (int i = 0; i < mainKeys.getRuns().get(0).getResults().size(); i++) {
                     if (mainKeys.getRuns().get(0).getResults().get(i).getMessage().getText().equals(node.toString())) {
+                        tabInfoClear();
                         tabInfo(i);
                         tabAnalisysSteps(i);
+
+                        FileWithPsiElement.psiElement(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                                getPosition(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
+                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
+                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
+                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
                         break;
                     }
-                }
-            } else {
-                tabInfoClear();
-                for (int i = 0; i < mainKeys.getRuns().get(0).getResults().size(); i++) {
+
+            //} else {
+                //tabInfoClear();
+                //for (int i = 0; i < mainKeys.getRuns().get(0).getResults().size(); i++) {
                     //заготовка под относительный путь
-                    String uri[] = mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
                     if (mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().contains(node.toString())) {
                         FileWithPsiElement.psiElement(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
                                 getPosition(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
@@ -161,7 +168,7 @@ public class SarifViewerToolWindow {
                         break;
                     }
                 }
-            }
+            //}
 
         });
 
@@ -258,6 +265,8 @@ public class SarifViewerToolWindow {
         levelLabel.setVisible(true);
         lblLvl.setVisible(true);
         lblLvl.setText(Objects.requireNonNullElse(level, "-"));
+        String pName = GetPathProject.getProject().getName();
+        String[] pUri = mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split(pName+"/");
         String[] uri = mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
         locationLabel.setVisible(true);
         lblLoc.setVisible(true);
@@ -265,7 +274,7 @@ public class SarifViewerToolWindow {
         lblLoc.addMouseListener(new PSIMouseListener(mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
                 pos));//выдаёт ошибку потому что тут передаётся абсолютный путь а у нас поиск по относительному
         //поэтому я просто передам сразу относительный пускай ищет имя файла в проекте
-        //lblLoc.addMouseListener(new PSIMouseListener(uri, pos));
+        //lblLoc.addMouseListener(new PSIMouseListener(pUri[pUri.length - 1], pos));
 
         ArrayList<Integer> logpos = new ArrayList<>();
         logpos.add(0,1);
@@ -276,7 +285,8 @@ public class SarifViewerToolWindow {
         lblLog.setVisible(true);
         lblLog.setText("<html><u>" + FileOpen.openFile + "</u></html>");
         lblLog.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        lblLog.addMouseListener(new PSIMouseListener(FileOpen.pathFile, logpos));
+        String[] logUri = FileOpen.pathFile.split(pName);
+        lblLog.addMouseListener(new PSIMouseListener(logUri[logUri.length-1], logpos));
     }
 
     private void tabInfoClear() {
@@ -308,7 +318,7 @@ public class SarifViewerToolWindow {
 
         DefaultListModel<String> defaultListModel = new DefaultListModel<>();
 
-        if (JsonParse.parseJson().getRuns().get(0).getResults().get(indexResult).getCodeFlows() != null) {
+        if (mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows() != null) {
             scrollPaneAnalysisSteps.setVisible(true);
             for (int analisysStep = 0; analisysStep < mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().size(); analisysStep++) {
                 if (mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(analisysStep).getLocation().getMessage() != null)

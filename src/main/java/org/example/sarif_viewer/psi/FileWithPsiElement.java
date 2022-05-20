@@ -13,16 +13,23 @@ import org.example.sarif_viewer.fileChooser.GetPathProject;
 import org.example.sarif_viewer.notifier.ShowNotificationActivity;
 
 import java.awt.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class FileWithPsiElement {
     public static void psiElement(String fName, ArrayList<Integer> position) {
         Project project = GetPathProject.getProject(); // получаем проект в котором этот файл существует
-        String newfName = fName.replace("/","\\");
-        newfName = newfName.replace("file:\\\\\\","");
-
-        VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(newfName); // создаём виртуалочку нашего файла;
-
+        String pPath = project.getBasePath();// путь до проекта может понадобиться потом
+        String newPath = fName.replace("file:///","");// временная перменаная под путь
+        Path usedPath = Path.of(newPath);//для работы с путём как с типо путь переопрееляем
+        System.out.println("типо путь"+usedPath);
+        if(usedPath.isAbsolute()) {//если он абсолютный, то всё ок отправляем дальше
+            newPath = newPath.replace("/", "\\");
+        }else {//если относительный, до приплюсуем путь до проекта
+            newPath = (pPath +"/"+ newPath).replace("/", "\\");
+        }
+        System.out.println("типо то что исползуем дальше"+newPath);
+        VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(newPath);// создаём виртуалочку нашего файла;
         // открываем файл в редакторе
         if (project != null) {
             if (virtualFile != null) {
@@ -38,12 +45,12 @@ public class FileWithPsiElement {
                     openFileDescriptor.navigate(false);
                 }
             } else
-                ShowNotificationActivity.notifyError(project, fName);
-                System.out.println("fName " + newfName);
+                ShowNotificationActivity.notifyError(project, newPath);
+                //System.out.println("fName " + newfName);
                 System.out.println("vFile" + virtualFile);
                 System.out.println(project);
         } else
-            ShowNotificationActivity.notifyError(project, fName);
+            ShowNotificationActivity.notifyError(project, newPath);
     }
 
     private static void selectedText(Project project, VirtualFile virtualFile, ArrayList<Integer> position) {
