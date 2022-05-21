@@ -7,7 +7,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.JBColor;
 import org.example.sarif_viewer.fileChooser.FileOpen;
-import org.example.sarif_viewer.fileChooser.GetPathProject;
 import org.example.sarif_viewer.parser.JsonParse;
 import org.example.sarif_viewer.parser.jsonKeys.MainKeys;
 import org.example.sarif_viewer.psi.FileWithPsiElement;
@@ -37,7 +36,7 @@ public class SarifViewerToolWindow {
     private JButton openFile;
     private JButton openFileMain;
 
-    private JScrollPane scrollPaneLocaations;
+    private JScrollPane scrollPaneLocations;
     private JTree treeLocations;
 
     private JScrollPane scrollPaneInfo;
@@ -58,6 +57,7 @@ public class SarifViewerToolWindow {
     private JScrollPane scrollPaneAnalysisSteps;
     private JPanel messageAnalysisSteps;
     private JList<String> listSteps;
+    private JPanel panelTxtMessage;
 
     private MainKeys mainKeys;
 
@@ -98,6 +98,8 @@ public class SarifViewerToolWindow {
     }
 
     private void getStyles() {
+//        Dimension dimension = new Dimension(800, Integer.MAX_VALUE);
+
         openFileMain.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         openFile.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         openFile.setIcon(AllIcons.Actions.MenuOpen);
@@ -105,7 +107,7 @@ public class SarifViewerToolWindow {
         treeLocations.setRootVisible(false);
         treeLocations.setBorder(BorderFactory.createEmptyBorder());
 
-        scrollPaneLocaations.setBorder(BorderFactory.createEmptyBorder());
+        scrollPaneLocations.setBorder(BorderFactory.createEmptyBorder());
         scrollPaneInfo.setBorder(BorderFactory.createEmptyBorder());
         scrollPaneAnalysisSteps.setBorder(BorderFactory.createEmptyBorder());
         tabbedPanelUp.setVisible(false);
@@ -140,38 +142,22 @@ public class SarifViewerToolWindow {
         treeLocations.getSelectionModel().addTreeSelectionListener(e -> {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
 
-            //if (node.isLeaf()) {
             for (int i = 0; i < mainKeys.getRuns().get(0).getResults().size(); i++) {
-                    if (mainKeys.getRuns().get(0).getResults().get(i).getMessage().getText().equals(node.toString())) {
-                        tabInfoClear();
-                        tabInfo(i);
-                        tabAnalisysSteps(i);
+                if (mainKeys.getRuns().get(0).getResults().get(i).getMessage().getText().equals(node.toString()) ||
+                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().contains(node.toString())) {
+                    tabInfoClear();
+                    tabInfo(i);
+                    tabAnalisysSteps(i);
 
-                        FileWithPsiElement.psiElement(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                                getPosition(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
-                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
-                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
-                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
-                        break;
-                    }
-
-            //} else {
-                //tabInfoClear();
-                //for (int i = 0; i < mainKeys.getRuns().get(0).getResults().size(); i++) {
-                    //заготовка под относительный путь
-                    if (mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().contains(node.toString())) {
-                        FileWithPsiElement.psiElement(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                                getPosition(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
-                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
-                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
-                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
-                        break;
-                    }
+                    FileWithPsiElement.psiElement(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                            getPosition(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
+                                    mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
+                                    mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
+                                    mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
+                    break;
                 }
-            //}
-
+            }
         });
-
 
         treeLocations.setCellRenderer(new DefaultTreeCellRenderer() {
             @Override
@@ -265,28 +251,18 @@ public class SarifViewerToolWindow {
         levelLabel.setVisible(true);
         lblLvl.setVisible(true);
         lblLvl.setText(Objects.requireNonNullElse(level, "-"));
-        String pName = GetPathProject.getProject().getName();
-        String[] pUri = mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split(pName+"/");
+
         String[] uri = mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
         locationLabel.setVisible(true);
         lblLoc.setVisible(true);
         lblLoc.setText("<html><u>" + uri[uri.length - 1] + "</u></html>");
-        lblLoc.addMouseListener(new PSIMouseListener(mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                pos));//выдаёт ошибку потому что тут передаётся абсолютный путь а у нас поиск по относительному
-        //поэтому я просто передам сразу относительный пускай ищет имя файла в проекте
-        //lblLoc.addMouseListener(new PSIMouseListener(pUri[pUri.length - 1], pos));
+        lblLoc.addMouseListener(new PSIMouseListener(mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(), pos));
 
-        ArrayList<Integer> logpos = new ArrayList<>();
-        logpos.add(0,1);
-        logpos.add(1,1);
-        logpos.add(2,null);
-        logpos.add(3,null);
         logLabel.setVisible(true);
         lblLog.setVisible(true);
         lblLog.setText("<html><u>" + FileOpen.openFile + "</u></html>");
         lblLog.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        String[] logUri = FileOpen.pathFile.split(pName);
-        lblLog.addMouseListener(new PSIMouseListener(logUri[logUri.length-1], logpos));
+        lblLog.addMouseListener(new PSIMouseListener(FileOpen.pathFile, pos));
     }
 
     private void tabInfoClear() {
@@ -337,6 +313,8 @@ public class SarifViewerToolWindow {
             public void mouseClicked(MouseEvent e) {
                 int selected = listSteps.locationToIndex(e.getPoint());
                 System.out.println(selected);
+
+                System.out.println(indexResult);
 
                 FileWithPsiElement.psiElement(mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
                         getPosition(mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getStartLine(),
