@@ -14,10 +14,7 @@ import org.example.sarif_viewer.psi.PSIMouseListener;
 
 import javax.swing.*;
 import javax.swing.text.Position;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
+import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -57,11 +54,11 @@ public class SarifViewerToolWindow {
     private JScrollPane scrollPaneAnalysisSteps;
     private JPanel messageAnalysisSteps;
     private JList<String> listSteps;
-    private JPanel panelTxtMessage;
 
     private MainKeys mainKeys;
 
     ArrayList<Integer> position = new ArrayList<>();
+    boolean checkParent = false;
 
     public SarifViewerToolWindow(ToolWindow toolWindow) {
         getStyles();
@@ -189,10 +186,24 @@ public class SarifViewerToolWindow {
     private void getModelJTree(JTree jTree) {
         DefaultMutableTreeNode parentRoot = new DefaultMutableTreeNode("sarif_view");
 
+        DefaultMutableTreeNode errorNameFile = null;
+
         for (int parentsNode = 0; parentsNode < mainKeys.getRuns().get(0).getResults().size(); parentsNode++) {
+            checkParent = false;
             String[] uri = mainKeys.getRuns().get(0).getResults().get(parentsNode).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
 
-            DefaultMutableTreeNode errorNameFile = new DefaultMutableTreeNode(uri[uri.length - 1]);
+            if (parentRoot.children().hasMoreElements()) {
+                parentRoot.children().asIterator().forEachRemaining(TreeNode -> {
+                    if (TreeNode.children().nextElement().getParent().toString().equals(uri[uri.length - 1]))
+                        checkParent = true;
+                });
+            } else {
+                errorNameFile = new DefaultMutableTreeNode(uri[uri.length - 1]);
+            }
+
+            if (!checkParent)
+                errorNameFile = new DefaultMutableTreeNode(uri[uri.length - 1]);
+
             parentRoot.add(errorNameFile);
             errorNameFile.add(new DefaultMutableTreeNode(mainKeys.getRuns().get(0).getResults().get(parentsNode).getMessage().getText()));
 
