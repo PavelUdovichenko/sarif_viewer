@@ -36,7 +36,7 @@ public class FileWithPsiElement {
                 OpenFileDescriptor openFileDescriptor;
 
                 if (position != null) {
-                    openFileDescriptor = new OpenFileDescriptor(project, virtualFile, position.get(0), position.get(1));
+                    openFileDescriptor = new OpenFileDescriptor(project, virtualFile, position.get(0)-1, position.get(1));
                     openFileDescriptor.navigate(true);
                     if (position.get(2) != null || position.get(3) != null)
                         selectedText(project, virtualFile, position);
