@@ -40,9 +40,11 @@ public class FileWithPsiElement {
                     openFileDescriptor.navigate(true);
                     if (position.get(2) != null || position.get(3) != null)
                         selectedText(project, virtualFile, position);
+                        virtualFile = null;
                 } else {
                     openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
                     openFileDescriptor.navigate(false);
+                    virtualFile = null;
                 }
             } else
                 ShowNotificationActivity.notifyError(project, newPath);

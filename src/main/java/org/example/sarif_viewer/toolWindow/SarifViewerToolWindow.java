@@ -33,11 +33,10 @@ public class SarifViewerToolWindow {
     private JToolBar toolBar;
     private JTabbedPane tabbedPanelUp;
     private JTabbedPane tabbedPanelDown;
-    private JComboBox<String> filterSV;
     private JButton openFile;
     private JButton openFileMain;
 
-    private JScrollPane scrollPaneLocaations;
+    private JScrollPane scrollPaneLocations;
     private JTree treeLocations;
 
     private JScrollPane scrollPaneInfo;
@@ -105,7 +104,7 @@ public class SarifViewerToolWindow {
         treeLocations.setRootVisible(false);
         treeLocations.setBorder(BorderFactory.createEmptyBorder());
 
-        scrollPaneLocaations.setBorder(BorderFactory.createEmptyBorder());
+        scrollPaneLocations.setBorder(BorderFactory.createEmptyBorder());
         scrollPaneInfo.setBorder(BorderFactory.createEmptyBorder());
         scrollPaneAnalysisSteps.setBorder(BorderFactory.createEmptyBorder());
         tabbedPanelUp.setVisible(false);

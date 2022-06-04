@@ -307,12 +307,9 @@
           <title-color color="-12828863"/>
         </border>
         <children>
-          <component id="8eacc" class="javax.swing.JComboBox" binding="filterSV">
+          <hspacer id="74b15">
             <constraints/>
-            <properties>
-              <editable value="true"/>
-            </properties>
-          </component>
+          </hspacer>
           <component id="bb7a3" class="javax.swing.JButton" binding="openFile">
             <constraints/>
             <properties>
@@ -320,6 +317,9 @@
               <toolTipText value="Open Log"/>
             </properties>
           </component>
+          <hspacer id="c3008">
+            <constraints/>
+          </hspacer>
         </children>
       </toolbar>
       <vspacer id="97a35">
