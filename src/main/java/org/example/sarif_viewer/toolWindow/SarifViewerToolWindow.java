@@ -29,7 +29,6 @@ import static org.example.sarif_viewer.fileChooser.FileOpen.pathFile;
 public class SarifViewerToolWindow {
     private JPanel myToolWindowContent;
 
-    private JToolBar toolBar;
     private JTabbedPane tabbedPanelUp;
     private JTabbedPane tabbedPanelDown;
     private JButton openFile;
@@ -56,6 +55,7 @@ public class SarifViewerToolWindow {
     private JScrollPane scrollPaneAnalysisSteps;
     private JPanel messageAnalysisSteps;
     private JList<String> listSteps;
+    private JPanel openNewLogPanel;
 
     private MainKeys mainKeys;
     private int checkSelectError = 0;
@@ -65,35 +65,8 @@ public class SarifViewerToolWindow {
     public SarifViewerToolWindow(ToolWindow toolWindow) {
         getStyles();
 
-        openFile.addActionListener(e -> {
-            FileOpen.showDlg("sarif", "SARIF-Files (*.sarif)", false);
-
-            if (!Objects.equals(pathFile, "")) {
-                mainKeys = JsonParse.parseJson();
-
-                tabLocations();
-                tabRules();
-            }
-        });
-
-        openFileMain.addActionListener(e -> {
-            FileOpen.showDlg("sarif", "SARIF-Files (*.sarif)", false);
-            if (!Objects.equals(pathFile, "")) {
-                mainKeys = JsonParse.parseJson();
-
-                tabbedPanelUp.setEnabled(true);
-                tabbedPanelUp.setVisible(true);
-                tabbedPanelDown.setEnabled(true);
-                tabbedPanelDown.setVisible(true);
-                toolBar.setEnabled(true);
-                toolBar.setVisible(true);
-                openFileMain.setEnabled(false);
-                openFileMain.setVisible(false);
-
-                tabLocations();
-                tabRules();
-            }
-        });
+        openFileMain.addActionListener(e -> openLog(0));
+        openFile.addActionListener(e -> openLog(1));
     }
 
     private void getStyles() {
@@ -110,7 +83,7 @@ public class SarifViewerToolWindow {
         scrollPaneAnalysisSteps.setBorder(BorderFactory.createEmptyBorder());
         tabbedPanelUp.setVisible(false);
         tabbedPanelDown.setVisible(false);
-        toolBar.setVisible(false);
+        openNewLogPanel.setVisible(false);
 
         lblTxtMessage.setVisible(false);
         ruleIdLabel.setVisible(false);
@@ -134,13 +107,44 @@ public class SarifViewerToolWindow {
         scrollPaneAnalysisSteps.setVisible(false);
     }
 
+    private void openLog(int checkButton) {
+        FileOpen.showDlg("sarif", "SARIF-Files (*.sarif)", false);
+
+        if (checkButton == 0) {
+            if (!Objects.equals(pathFile, "")) {
+                mainKeys = JsonParse.parseJson();
+
+                if (!mainKeys.get$schema().isEmpty()) { // или isEmpty?
+                    tabbedPanelUp.setEnabled(true);
+                    tabbedPanelUp.setVisible(true);
+                    tabbedPanelDown.setEnabled(true);
+                    tabbedPanelDown.setVisible(true);
+                    openNewLogPanel.setVisible(true);
+                    openFileMain.setEnabled(false);
+                    openFileMain.setVisible(false);
+
+                    tabLocations();
+                } else
+                    openLog(0);
+            }
+        } else if (checkButton == 1) {
+            if (!Objects.equals(pathFile, "")) {
+                mainKeys = JsonParse.parseJson();
+
+                if (!mainKeys.get$schema().isEmpty()) // или isEmpty?
+                    tabLocations();
+                else
+                    openLog(1);
+            }
+        }
+    }
+
     private void tabLocations() {
         getModelJTree(treeLocations);
 
         treeLocations.getSelectionModel().addTreeSelectionListener(e -> {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
 
-            //if (node.isLeaf()) {
             for (int i = 0; i < mainKeys.getRuns().get(0).getResults().size(); i++) {
                 if (mainKeys.getRuns().get(0).getResults().get(i).getMessage().getText().equals(node.toString())) {
                     tabInfoClear();
@@ -238,10 +242,6 @@ public class SarifViewerToolWindow {
         } else {
             return AllIcons.General.Warning;
         }
-    }
-
-    private void tabRules() {
-
     }
 
     private void tabInfo(int indexResult) {
