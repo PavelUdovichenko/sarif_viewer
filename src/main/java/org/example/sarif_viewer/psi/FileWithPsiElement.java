@@ -19,50 +19,44 @@ import java.util.ArrayList;
 public class FileWithPsiElement {
     public static void psiElement(String fName, ArrayList<Integer> position) {
         Project project = GetPathProject.getProject(); // получаем проект в котором этот файл существует
-        String pPath = project.getBasePath();// путь до проекта может понадобиться потом
-        String newPath = fName.replace("file:///","");// временная перменаная под путь
-        Path usedPath = Path.of(newPath);//для работы с путём как с типо путь переопрееляем
-        System.out.println("типо путь"+usedPath);
-        if(usedPath.isAbsolute()) {//если он абсолютный, то всё ок отправляем дальше
-            newPath = newPath.replace("/", "\\");
-        }else {//если относительный, до приплюсуем путь до проекта
-            newPath = (pPath +"/"+ newPath).replace("/", "\\");
-        }
-        System.out.println("типо то что исползуем дальше"+newPath);
+
+        String newPath = fName.replace("file:///",""); // временная перменаная под путь
+        Path usedPath = Path.of(newPath);
+
+        if (!usedPath.isAbsolute()) // если он не абсолютный, то прибавляем путь проекта
+            newPath = (project.getBasePath() +"/"+ newPath);
+
         VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(newPath);// создаём виртуалочку нашего файла;
-        // открываем файл в редакторе
-        if (project != null) {
+
+        if (project != null) { // открываем файл в редакторе
             if (virtualFile != null) {
                 OpenFileDescriptor openFileDescriptor;
 
                 if (position != null) {
-                    openFileDescriptor = new OpenFileDescriptor(project, virtualFile, position.get(0)-1, position.get(1));
+                    openFileDescriptor = new OpenFileDescriptor(project, virtualFile, position.get(0) - 1, position.get(1));
                     openFileDescriptor.navigate(true);
                     if (position.get(2) != null || position.get(3) != null)
                         selectedText(project, virtualFile, position);
-                        virtualFile = null;
                 } else {
                     openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
                     openFileDescriptor.navigate(false);
-                    virtualFile = null;
                 }
             } else
                 ShowNotificationActivity.notifyError(project, newPath);
-                //System.out.println("fName " + newfName);
-                System.out.println("vFile" + virtualFile);
-                System.out.println(project);
+
         } else
             ShowNotificationActivity.notifyError(project, newPath);
     }
 
     private static void selectedText(Project project, VirtualFile virtualFile, ArrayList<Integer> position) {
         TextAttributes textattributes = new TextAttributes(null, null, JBColor.RED, EffectType.WAVE_UNDERSCORE, Font.PLAIN);
+        //TextAttributes textattributes = new TextAttributes(null, null, JBColor.YELLOW, EffectType.BOXED, Font.PLAIN);
 
-//        TextAttributes textattributes = new TextAttributes(null, null, JBColor.YELLOW, EffectType.BOXED, Font.PLAIN);
         FileEditor[] editors = FileEditorManager.getInstance(project).getEditors(virtualFile);
 
         for (FileEditor editor : editors) {
             MarkupModel markupModel = ((TextEditor) editor).getEditor().getMarkupModel();
+            markupModel.removeAllHighlighters();
             ArrayList<Integer> offSetPosition = getPositionHighlighter(markupModel.getDocument().getText().split("\n"), position);
             markupModel.addRangeHighlighter(offSetPosition.get(0), offSetPosition.get(1), HighlighterLayer.ELEMENT_UNDER_CARET, textattributes, HighlighterTargetArea.EXACT_RANGE);
         }

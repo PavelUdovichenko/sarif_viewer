@@ -7,7 +7,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.JBColor;
 import org.example.sarif_viewer.fileChooser.FileOpen;
-import org.example.sarif_viewer.fileChooser.GetPathProject;
 import org.example.sarif_viewer.parser.JsonParse;
 import org.example.sarif_viewer.parser.jsonKeys.MainKeys;
 import org.example.sarif_viewer.psi.FileWithPsiElement;
@@ -59,6 +58,7 @@ public class SarifViewerToolWindow {
     private JList<String> listSteps;
 
     private MainKeys mainKeys;
+    private int checkSelectError = 0;
 
     ArrayList<Integer> position = new ArrayList<>();
 
@@ -98,6 +98,7 @@ public class SarifViewerToolWindow {
 
     private void getStyles() {
         openFileMain.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        openFileMain.setIcon(AllIcons.Actions.MenuOpen);
         openFile.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         openFile.setIcon(AllIcons.Actions.MenuOpen);
 
@@ -141,34 +142,28 @@ public class SarifViewerToolWindow {
 
             //if (node.isLeaf()) {
             for (int i = 0; i < mainKeys.getRuns().get(0).getResults().size(); i++) {
-                    if (mainKeys.getRuns().get(0).getResults().get(i).getMessage().getText().equals(node.toString())) {
-                        tabInfoClear();
-                        tabInfo(i);
-                        tabAnalisysSteps(i);
+                if (mainKeys.getRuns().get(0).getResults().get(i).getMessage().getText().equals(node.toString())) {
+                    tabInfoClear();
+                    tabInfo(i);
+                    tabAnalisysSteps(i);
 
-                        FileWithPsiElement.psiElement(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                                getPosition(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
-                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
-                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
-                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
-                        break;
-                    }
-
-            //} else {
-                //tabInfoClear();
-                //for (int i = 0; i < mainKeys.getRuns().get(0).getResults().size(); i++) {
-                    //заготовка под относительный путь
-                    if (mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().contains(node.toString())) {
-                        FileWithPsiElement.psiElement(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                                getPosition(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
-                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
-                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
-                                        mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
-                        break;
-                    }
+                    FileWithPsiElement.psiElement(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                            getPosition(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
+                                    mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
+                                    mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
+                                    mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
+                    break;
                 }
-            //}
 
+                if (mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().contains(node.toString())) {
+                    FileWithPsiElement.psiElement(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                            getPosition(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
+                                    mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
+                                    mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
+                                    mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
+                    break;
+                }
+            }
         });
 
 
@@ -200,13 +195,27 @@ public class SarifViewerToolWindow {
     }
 
     private void getModelJTree(JTree jTree) {
+        ArrayList<String> checkParentNodeName = new ArrayList<>();
         DefaultMutableTreeNode parentRoot = new DefaultMutableTreeNode("sarif_view");
+
+        DefaultMutableTreeNode errorNameFile = null;
 
         for (int parentsNode = 0; parentsNode < mainKeys.getRuns().get(0).getResults().size(); parentsNode++) {
             String[] uri = mainKeys.getRuns().get(0).getResults().get(parentsNode).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
 
-            DefaultMutableTreeNode errorNameFile = new DefaultMutableTreeNode(uri[uri.length - 1]);
-            parentRoot.add(errorNameFile);
+            if (checkParentNodeName.isEmpty()) {
+                errorNameFile = new DefaultMutableTreeNode(uri[uri.length - 1]);
+                parentRoot.add(errorNameFile);
+                checkParentNodeName.add(uri[uri.length - 1]);
+            } else {
+                for (String s : checkParentNodeName) {
+                    if (!s.equals(uri[uri.length - 1])) {
+                        errorNameFile = new DefaultMutableTreeNode(uri[uri.length - 1]);
+                        parentRoot.add(errorNameFile);
+                    }
+                }
+            }
+
             errorNameFile.add(new DefaultMutableTreeNode(mainKeys.getRuns().get(0).getResults().get(parentsNode).getMessage().getText()));
 
             DefaultTreeModel model = (DefaultTreeModel) this.treeLocations.getModel();
@@ -264,28 +273,18 @@ public class SarifViewerToolWindow {
         levelLabel.setVisible(true);
         lblLvl.setVisible(true);
         lblLvl.setText(Objects.requireNonNullElse(level, "-"));
-        String pName = GetPathProject.getProject().getName();
-        String[] pUri = mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split(pName+"/");
+
         String[] uri = mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
         locationLabel.setVisible(true);
         lblLoc.setVisible(true);
         lblLoc.setText("<html><u>" + uri[uri.length - 1] + "</u></html>");
-        lblLoc.addMouseListener(new PSIMouseListener(mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                pos));//выдаёт ошибку потому что тут передаётся абсолютный путь а у нас поиск по относительному
-        //поэтому я просто передам сразу относительный пускай ищет имя файла в проекте
-        //lblLoc.addMouseListener(new PSIMouseListener(pUri[pUri.length - 1], pos));
+        lblLoc.addMouseListener(new PSIMouseListener(mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(), pos));
 
-        ArrayList<Integer> logpos = new ArrayList<>();
-        logpos.add(0,1);
-        logpos.add(1,1);
-        logpos.add(2,null);
-        logpos.add(3,null);
         logLabel.setVisible(true);
         lblLog.setVisible(true);
         lblLog.setText("<html><u>" + FileOpen.openFile + "</u></html>");
         lblLog.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        String[] logUri = FileOpen.pathFile.split(pName);
-        lblLog.addMouseListener(new PSIMouseListener(logUri[logUri.length-1], logpos));
+        lblLog.addMouseListener(new PSIMouseListener(FileOpen.pathFile, null));
     }
 
     private void tabInfoClear() {
@@ -314,6 +313,7 @@ public class SarifViewerToolWindow {
     private void tabAnalisysSteps(int indexResult) {
         messageAnalysisSteps.setVisible(false);
         scrollPaneAnalysisSteps.setVisible(false);
+        checkSelectError = indexResult;
 
         DefaultListModel<String> defaultListModel = new DefaultListModel<>();
 
@@ -335,9 +335,10 @@ public class SarifViewerToolWindow {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int selected = listSteps.locationToIndex(e.getPoint());
-                System.out.println(selected);
 
-                FileWithPsiElement.psiElement(mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                if (indexResult == checkSelectError)
+                    FileWithPsiElement.psiElement(
+                        mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getArtifactLocation().getUri(),
                         getPosition(mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getStartLine(),
                                 mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getStartColumn(),
                                 mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getEndLine(),
@@ -361,16 +362,18 @@ public class SarifViewerToolWindow {
         }*/
         // если есть только нач. строка то начнём с начала строки и закончим в конце (выделим всю строку)
         if (position.get(1) == null) {
-            position.set(1, position.get(0));
+            position.set(1, 0);
             position.set(2, position.get(0) + 1);
             position.set(3, 0);
         }
+
         // если есть начальные строка и колонна но нет ничего остального, всё остальное повторим со стартовым
         if (position.get(2) == null)
             position.set(2, position.get(0));
+
         if (position.get(3) == null)
-            if(position.get(1) != null)
-            position.set(3, position.get(1) + 1);
+            if (position.get(1) != null)
+                position.set(3, position.get(1) + 1);
 
         return position;
     }

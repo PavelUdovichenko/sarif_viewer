@@ -307,14 +307,12 @@
           <title-color color="-12828863"/>
         </border>
         <children>
-          <hspacer id="74b15">
-            <constraints/>
-          </hspacer>
           <component id="bb7a3" class="javax.swing.JButton" binding="openFile">
             <constraints/>
             <properties>
               <enabled value="true"/>
-              <toolTipText value="Open Log"/>
+              <text value="Open new SARIF log"/>
+              <toolTipText value="Open new SARIF log"/>
             </properties>
           </component>
           <hspacer id="c3008">
@@ -333,6 +331,7 @@
         </constraints>
         <properties>
           <text value="Open SARIF log"/>
+          <toolTipText value="Open SARIF log"/>
         </properties>
       </component>
       <vspacer id="96b41">
