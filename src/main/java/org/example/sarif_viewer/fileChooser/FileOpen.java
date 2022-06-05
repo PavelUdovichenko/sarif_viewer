@@ -41,6 +41,8 @@ public class FileOpen {
                 pathFile = jFileChooser.getSelectedFile().toString();
                 openFile = jFileChooser.getSelectedFile().getName();
             }
+        } else {
+            pathFile = "";
         }
     }
 }

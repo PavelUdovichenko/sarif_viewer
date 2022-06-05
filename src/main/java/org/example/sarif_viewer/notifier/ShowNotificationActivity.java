@@ -15,4 +15,14 @@ public class ShowNotificationActivity {
         builder.addDefaultActions();
         builder.build().notify(project);
     }
+
+    public static void notifyNotSarifOpenFile(@NotNull Project project, String content) {
+        NotificationConfigBuilder builder = NotificationConfigBuilder.create(project);
+
+        builder.setNotificationType(NotificationType.INFORMATION);
+        builder.setTitle("This is not a SARIF-File");
+        builder.setSubtitle(content);
+        builder.setContent("Source: sarif viewer (Extension)");
+        builder.build().notify(project);
+    }
 }

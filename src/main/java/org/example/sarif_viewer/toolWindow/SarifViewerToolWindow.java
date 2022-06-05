@@ -4,9 +4,12 @@
 package org.example.sarif_viewer.toolWindow;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.JBColor;
 import org.example.sarif_viewer.fileChooser.FileOpen;
+import org.example.sarif_viewer.fileChooser.GetPathProject;
+import org.example.sarif_viewer.notifier.ShowNotificationActivity;
 import org.example.sarif_viewer.parser.JsonParse;
 import org.example.sarif_viewer.parser.jsonKeys.MainKeys;
 import org.example.sarif_viewer.psi.FileWithPsiElement;
@@ -23,6 +26,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import static org.example.sarif_viewer.fileChooser.FileOpen.pathFile;
 
@@ -110,11 +114,13 @@ public class SarifViewerToolWindow {
     private void openLog(int checkButton) {
         FileOpen.showDlg("sarif", "SARIF-Files (*.sarif)", false);
 
+        String[] uriPathFile = pathFile.split(Pattern.quote("\\"));
+
         if (checkButton == 0) {
             if (!Objects.equals(pathFile, "")) {
                 mainKeys = JsonParse.parseJson();
 
-                if (!mainKeys.get$schema().isEmpty()) { // или isEmpty?
+                if (mainKeys.get$schema() != null) {
                     tabbedPanelUp.setEnabled(true);
                     tabbedPanelUp.setVisible(true);
                     tabbedPanelDown.setEnabled(true);
@@ -124,17 +130,21 @@ public class SarifViewerToolWindow {
                     openFileMain.setVisible(false);
 
                     tabLocations();
-                } else
+                } else {
+                    ShowNotificationActivity.notifyNotSarifOpenFile(GetPathProject.getProject(), uriPathFile[uriPathFile.length - 1]);
                     openLog(0);
+                }
             }
         } else if (checkButton == 1) {
             if (!Objects.equals(pathFile, "")) {
                 mainKeys = JsonParse.parseJson();
 
-                if (!mainKeys.get$schema().isEmpty()) // или isEmpty?
+                if (mainKeys.get$schema() != null)
                     tabLocations();
-                else
+                else {
+                    ShowNotificationActivity.notifyNotSarifOpenFile(GetPathProject.getProject(), uriPathFile[uriPathFile.length -1]);
                     openLog(1);
+                }
             }
         }
     }
@@ -169,7 +179,6 @@ public class SarifViewerToolWindow {
                 }
             }
         });
-
 
         treeLocations.setCellRenderer(new DefaultTreeCellRenderer() {
             @Override
