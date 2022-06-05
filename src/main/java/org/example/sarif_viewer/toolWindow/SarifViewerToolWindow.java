@@ -73,16 +73,21 @@ public class SarifViewerToolWindow {
     }
 
     private void getStyles() {
+        Dimension dimension = new Dimension(500, Integer.MAX_VALUE);
         openFileMain.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         openFileMain.setIcon(AllIcons.Actions.MenuOpen);
         openFile.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         openFile.setIcon(AllIcons.Actions.MenuOpen);
 
+        treeLocations.setMaximumSize(dimension);
         treeLocations.setRootVisible(false);
         treeLocations.setBorder(BorderFactory.createEmptyBorder());
 
+        scrollPaneLocations.setMaximumSize(dimension);
         scrollPaneLocations.setBorder(BorderFactory.createEmptyBorder());
+        scrollPaneInfo.setMaximumSize(dimension);
         scrollPaneInfo.setBorder(BorderFactory.createEmptyBorder());
+        scrollPaneAnalysisSteps.setMaximumSize(dimension);
         scrollPaneAnalysisSteps.setBorder(BorderFactory.createEmptyBorder());
         tabbedPanelUp.setVisible(false);
         tabbedPanelDown.setVisible(false);
@@ -260,7 +265,15 @@ public class SarifViewerToolWindow {
 
         String txtMessage = mainKeys.getRuns().get(0).getResults().get(indexResult).getMessage().getText();
         lblTxtMessage.setVisible(true);
-        lblTxtMessage.setText(txtMessage);
+
+        if (txtMessage.length() > 100) {
+            String subString = txtMessage.substring(0, 100);
+            String newTxtMessage = subString + "...";
+            lblTxtMessage.setText(newTxtMessage);
+        } else {
+            lblTxtMessage.setText(txtMessage);
+        }
+        lblTxtMessage.setToolTipText(txtMessage);
 
         String ruleId = mainKeys.getRuns().get(0).getResults().get(indexResult).getRuleId();
         ruleIdLabel.setVisible(true);
