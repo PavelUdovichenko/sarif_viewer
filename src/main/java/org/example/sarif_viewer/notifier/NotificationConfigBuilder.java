@@ -134,8 +134,8 @@ class NotificationConfigBuilder {
 
         addAction(ConfigurableNotificationAction.create(
                 builder -> {
-                    String filterExt = subtitle.split("\\.")[1];
-                    FileOpen.showDlg(filterExt, filterExt.toUpperCase() + "-Files (*." + filterExt + ")", true);
+                    String[] filterExt = subtitle.split("\\.");
+                    FileOpen.showDlg(filterExt[filterExt.length - 1], filterExt[filterExt.length - 1].toUpperCase() + "-Files (*." + filterExt[filterExt.length - 1] + ")", true);
                 })
         );
     }
