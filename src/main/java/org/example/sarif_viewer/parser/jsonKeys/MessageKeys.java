@@ -7,7 +7,7 @@ public class MessageKeys {
     String text;
 
     public String getText() {
-        return text;
+        return text.replace("\n", "  ");
     }
     public void setText(String text) {
         this.text = text;

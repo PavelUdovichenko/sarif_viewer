@@ -265,15 +265,7 @@ public class SarifViewerToolWindow {
 
         String txtMessage = mainKeys.getRuns().get(0).getResults().get(indexResult).getMessage().getText();
         lblTxtMessage.setVisible(true);
-
-        if (txtMessage.length() > 100) {
-            String subString = txtMessage.substring(0, 100);
-            String newTxtMessage = subString + "...";
-            lblTxtMessage.setText(newTxtMessage);
-        } else {
-            lblTxtMessage.setText(txtMessage);
-        }
-        lblTxtMessage.setToolTipText(txtMessage);
+        lblTxtMessage.setText("<html>" + txtMessage.replace("  ", "<br>") + "</html>");
 
         String ruleId = mainKeys.getRuns().get(0).getResults().get(indexResult).getRuleId();
         ruleIdLabel.setVisible(true);

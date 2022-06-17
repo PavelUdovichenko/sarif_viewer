@@ -50,7 +50,6 @@ public class FileWithPsiElement {
 
     private static void selectedText(Project project, VirtualFile virtualFile, ArrayList<Integer> position) {
         TextAttributes textattributes = new TextAttributes(null, null, JBColor.RED, EffectType.WAVE_UNDERSCORE, Font.PLAIN);
-        //TextAttributes textattributes = new TextAttributes(null, null, JBColor.YELLOW, EffectType.BOXED, Font.PLAIN);
 
         FileEditor[] editors = FileEditorManager.getInstance(project).getEditors(virtualFile);
 
@@ -64,16 +63,18 @@ public class FileWithPsiElement {
 
     private static ArrayList<Integer> getPositionHighlighter(String[] markMdl, ArrayList<Integer> position) {
         ArrayList<Integer> offSet = new ArrayList<>();
-        int startOffSet = 0, endOffSet = 0;
+        int startOffSet = 0, endOffSet = 0, j = 0;
 
         for (int i = 0; i < markMdl.length; i++) {
             if (i + 1 < position.get(0)) {
                 startOffSet += markMdl[i].length() + 1;
                 endOffSet = startOffSet;
+                j = i;
             } else if (i + 1 < position.get(2))
                 endOffSet += markMdl[i].length() + 1;
             else {
-                startOffSet += position.get(1) - 1;
+                if (position.get(1) != 0)
+                    startOffSet += position.get(1) - 1;
 
                 endOffSet += Math.min(markMdl[i].length(), position.get(3) - 1);
 
@@ -81,9 +82,17 @@ public class FileWithPsiElement {
             }
         }
 
+        if (position.get(1) == 0) {
+            for (int k = 0; k < markMdl[j + 1].length(); k++) {
+                if (markMdl[j + 1].charAt(k) == ' ')
+                    startOffSet += 1;
+                else
+                    break;
+            }
+        }
+
         offSet.add(0, startOffSet);
         offSet.add(1, endOffSet);
-
         return offSet;
     }
 }
