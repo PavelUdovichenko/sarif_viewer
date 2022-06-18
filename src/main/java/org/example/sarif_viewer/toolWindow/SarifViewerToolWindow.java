@@ -159,27 +159,29 @@ public class SarifViewerToolWindow {
         treeLocations.getSelectionModel().addTreeSelectionListener(e -> {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
 
-            for (int i = 0; i < mainKeys.getRuns().get(0).getResults().size(); i++) {
-                if (mainKeys.getRuns().get(0).getResults().get(i).getMessage().getText().equals(node.toString())) {
-                    tabInfoClear();
-                    tabInfo(i);
-                    tabAnalisysSteps(i);
+            for (int runsIndex = 0; runsIndex < mainKeys.getRuns().size(); runsIndex++) {
+                for (int resultsIndex = 0; resultsIndex < mainKeys.getRuns().get(runsIndex).getResults().size(); resultsIndex++) {
+                    if (mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getMessage().getText().equals(node.toString())) {
+                        tabInfoClear();
+                        tabInfo(runsIndex, resultsIndex);
+                        tabAnalisysSteps(runsIndex, resultsIndex);
 
-                    FileWithPsiElement.psiElement(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                            getPosition(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
-                                    mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
-                                    mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
-                                    mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
-                    break;
-                }
+                        FileWithPsiElement.psiElement(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                                getPosition(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
+                                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
+                                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
+                                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
+                        break;
+                    }
 
-                if (mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().contains(node.toString())) {
-                    FileWithPsiElement.psiElement(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                            getPosition(mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
-                                    mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
-                                    mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
-                                    mainKeys.getRuns().get(0).getResults().get(i).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
-                    break;
+                    if (mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().contains(node.toString())) {
+                        FileWithPsiElement.psiElement(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                                getPosition(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
+                                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
+                                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
+                                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
+                        break;
+                    }
                 }
             }
         });
@@ -192,10 +194,12 @@ public class SarifViewerToolWindow {
                 Component c = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, focused);
                 Object obj = ((DefaultMutableTreeNode) value).getUserObject();
                 if (leaf) {
-                    for (int i = 0; i < mainKeys.getRuns().get(0).getResults().size(); i++) {
-                        if (mainKeys.getRuns().get(0).getResults().get(i).getMessage().getText().contains(obj.toString())) {
-                            setIcon(getIconNode(mainKeys.getRuns().get(0).getResults().get(i).getLevel()));
-                            break;
+                    for (int runsIndex = 0; runsIndex < mainKeys.getRuns().size(); runsIndex++) {
+                        for (int i = 0; i < mainKeys.getRuns().get(runsIndex).getResults().size(); i++) {
+                            if (mainKeys.getRuns().get(runsIndex).getResults().get(i).getMessage().getText().contains(obj.toString())) {
+                                setIcon(getIconNode(mainKeys.getRuns().get(runsIndex).getResults().get(i).getLevel()));
+                                break;
+                            }
                         }
                     }
                 } else {
@@ -215,30 +219,38 @@ public class SarifViewerToolWindow {
         ArrayList<String> checkParentNodeName = new ArrayList<>();
         DefaultMutableTreeNode parentRoot = new DefaultMutableTreeNode("sarif_view");
 
+        boolean check = false;
+
         DefaultMutableTreeNode errorNameFile = null;
 
-        for (int parentsNode = 0; parentsNode < mainKeys.getRuns().get(0).getResults().size(); parentsNode++) {
-            String[] uri = mainKeys.getRuns().get(0).getResults().get(parentsNode).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
+        for (int runsIndex = 0; runsIndex < mainKeys.getRuns().size(); runsIndex++) {
+            for (int parentsNode = 0; parentsNode < mainKeys.getRuns().get(runsIndex).getResults().size(); parentsNode++) {
+                String[] uri = mainKeys.getRuns().get(runsIndex).getResults().get(parentsNode).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
 
-            if (checkParentNodeName.isEmpty()) {
-                errorNameFile = new DefaultMutableTreeNode(uri[uri.length - 1]);
-                parentRoot.add(errorNameFile);
-                checkParentNodeName.add(uri[uri.length - 1]);
-            } else {
-                for (String s : checkParentNodeName) {
-                    if (!s.equals(uri[uri.length - 1])) {
-                        errorNameFile = new DefaultMutableTreeNode(uri[uri.length - 1]);
-                        parentRoot.add(errorNameFile);
+                if (checkParentNodeName.isEmpty()) {
+                    errorNameFile = new DefaultMutableTreeNode(uri[uri.length - 1]);
+                    parentRoot.add(errorNameFile);
+                    checkParentNodeName.add(uri[uri.length - 1]);
+                } else {
+                    for (String s : checkParentNodeName) {
+                        check = !s.equals(uri[uri.length - 1]);
                     }
                 }
+
+                if (check) {
+                    errorNameFile = new DefaultMutableTreeNode(uri[uri.length - 1]);
+                    parentRoot.add(errorNameFile);
+                    checkParentNodeName.add(uri[uri.length - 1]);
+                    check = false;
+                }
+
+                errorNameFile.add(new DefaultMutableTreeNode(mainKeys.getRuns().get(runsIndex).getResults().get(parentsNode).getMessage().getText()));
+
+                DefaultTreeModel model = (DefaultTreeModel) this.treeLocations.getModel();
+                model.setRoot(parentRoot);
+
+                jTree.setModel(model);
             }
-
-            errorNameFile.add(new DefaultMutableTreeNode(mainKeys.getRuns().get(0).getResults().get(parentsNode).getMessage().getText()));
-
-            DefaultTreeModel model = (DefaultTreeModel) this.treeLocations.getModel();
-            model.setRoot(parentRoot);
-
-            jTree.setModel(model);
         }
     }
 
@@ -257,41 +269,47 @@ public class SarifViewerToolWindow {
         }
     }
 
-    private void tabInfo(int indexResult) {
-        ArrayList<Integer> pos = getPosition(mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
-                mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
-                mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
-                mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn());
+    private void tabInfo(int runsIndex, int resultsIndex) {
+        ArrayList<Integer> pos = getPosition(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
+                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
+                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
+                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn());
 
-        String txtMessage = mainKeys.getRuns().get(0).getResults().get(indexResult).getMessage().getText();
+        String txtMessage = mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getMessage().getText();
         lblTxtMessage.setVisible(true);
-        lblTxtMessage.setText("<html>" + txtMessage.replace("  ", "<br>") + "</html>");
 
-        String ruleId = mainKeys.getRuns().get(0).getResults().get(indexResult).getRuleId();
+        lblTxtMessage.setText("<html>" + txtMessage.replace("  ", "<br>") + "</html>");
+        lblTxtMessage.addMouseListener(new PSIMouseListener(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                getPosition(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
+                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
+                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
+                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getEndColumn())));
+
+        String ruleId = mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRuleId();
         ruleIdLabel.setVisible(true);
         lblRulId.setVisible(true);
         lblRulId.setText(Objects.requireNonNullElse(ruleId, "-"));
 
-        String ruleName = mainKeys.getRuns().get(0).getTool().getDriver().getRules().get(0).getName();
+        String ruleName = mainKeys.getRuns().get(runsIndex).getTool().getDriver().getRules().get(0).getName();
         ruleNameLabel.setVisible(true);
         lblRulName.setVisible(true);
         lblRulName.setText(Objects.requireNonNullElse(ruleName, "-"));
 
-        String ruleDescription = mainKeys.getRuns().get(0).getTool().getDriver().getRules().get(0).getShortDescription().getText();
+        String ruleDescription = mainKeys.getRuns().get(runsIndex).getTool().getDriver().getRules().get(0).getShortDescription().getText();
         ruleDescriptionLabel.setVisible(true);
         lblRulDes.setVisible(true);
         lblRulDes.setText(Objects.requireNonNullElse(ruleDescription, "-"));
 
-        String level = mainKeys.getRuns().get(0).getResults().get(indexResult).getLevel();
+        String level = mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLevel();
         levelLabel.setVisible(true);
         lblLvl.setVisible(true);
         lblLvl.setText(Objects.requireNonNullElse(level, "-"));
 
-        String[] uri = mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
+        String[] uri = mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
         locationLabel.setVisible(true);
         lblLoc.setVisible(true);
         lblLoc.setText("<html><u>" + uri[uri.length - 1] + "</u></html>");
-        lblLoc.addMouseListener(new PSIMouseListener(mainKeys.getRuns().get(0).getResults().get(indexResult).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(), pos));
+        lblLoc.addMouseListener(new PSIMouseListener(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(), pos));
 
         logLabel.setVisible(true);
         lblLog.setVisible(true);
@@ -323,18 +341,18 @@ public class SarifViewerToolWindow {
         lblLog.setText("");
     }
 
-    private void tabAnalisysSteps(int indexResult) {
+    private void tabAnalisysSteps(int runsIndex, int resultsIndex) {
         messageAnalysisSteps.setVisible(false);
         scrollPaneAnalysisSteps.setVisible(false);
-        checkSelectError = indexResult;
+        checkSelectError = resultsIndex;
 
         DefaultListModel<String> defaultListModel = new DefaultListModel<>();
 
-        if (mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows() != null) {
+        if (mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getCodeFlows() != null) {
             scrollPaneAnalysisSteps.setVisible(true);
-            for (int analisysStep = 0; analisysStep < mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().size(); analisysStep++) {
-                if (mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(analisysStep).getLocation().getMessage() != null)
-                    defaultListModel.addElement(mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(analisysStep).getLocation().getMessage().getText());
+            for (int analisysStep = 0; analisysStep < mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().size(); analisysStep++) {
+                if (mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(analisysStep).getLocation().getMessage() != null)
+                    defaultListModel.addElement(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(analisysStep).getLocation().getMessage().getText());
                 else
                     defaultListModel.addElement("-");
             }
@@ -349,13 +367,13 @@ public class SarifViewerToolWindow {
             public void mouseClicked(MouseEvent e) {
                 int selected = listSteps.locationToIndex(e.getPoint());
 
-                if (indexResult == checkSelectError)
+                if (resultsIndex == checkSelectError)
                     FileWithPsiElement.psiElement(
-                        mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getArtifactLocation().getUri(),
-                        getPosition(mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getStartLine(),
-                                mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getStartColumn(),
-                                mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getEndLine(),
-                                mainKeys.getRuns().get(0).getResults().get(indexResult).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getEndColumn()));
+                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getArtifactLocation().getUri(),
+                        getPosition(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getStartLine(),
+                                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getStartColumn(),
+                                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getEndLine(),
+                                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getEndColumn()));
             }
         });
     }
