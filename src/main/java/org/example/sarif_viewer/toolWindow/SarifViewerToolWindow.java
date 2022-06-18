@@ -61,7 +61,7 @@ public class SarifViewerToolWindow {
     private JPanel openNewLogPanel;
 
     private MainKeys mainKeys;
-    private int checkSelectError = 0;
+    private int checkSelectRunsIndex = 0, checkSelectResultsIndex = 0;
 
     ArrayList<Integer> position = new ArrayList<>();
 
@@ -94,6 +94,7 @@ public class SarifViewerToolWindow {
         openNewLogPanel.setVisible(false);
 
         lblTxtMessage.setVisible(false);
+        lblTxtMessage.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         ruleIdLabel.setVisible(false);
         lblRulId.setVisible(false);
         ruleNameLabel.setVisible(false);
@@ -110,6 +111,8 @@ public class SarifViewerToolWindow {
         lblLog.setVisible(false);
         lblLog.setForeground(JBColor.BLUE);
         lblLog.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        listSteps.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         messageAnalysisSteps.setVisible(false);
         scrollPaneAnalysisSteps.setVisible(false);
@@ -161,7 +164,7 @@ public class SarifViewerToolWindow {
 
             for (int runsIndex = 0; runsIndex < mainKeys.getRuns().size(); runsIndex++) {
                 for (int resultsIndex = 0; resultsIndex < mainKeys.getRuns().get(runsIndex).getResults().size(); resultsIndex++) {
-                    if (mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getMessage().getText().equals(node.toString())) {
+                    if (mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getMessage().getText().contains(node.toString())) {
                         tabInfoClear();
                         tabInfo(runsIndex, resultsIndex);
                         tabAnalisysSteps(runsIndex, resultsIndex);
@@ -275,10 +278,26 @@ public class SarifViewerToolWindow {
                 mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
                 mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn());
 
-        String txtMessage = mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getMessage().getText();
+        String[] txtMessage = mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getMessage().getText().split(" {2}");
+        StringBuilder txtMess = new StringBuilder();
         lblTxtMessage.setVisible(true);
 
-        lblTxtMessage.setText("<html>" + txtMessage.replace("  ", "<br>") + "</html>");
+        for (int i = 0; i < txtMessage.length; i++) {
+            if (txtMessage[i].contains("](1)")) {
+                txtMessage[i] = editTxtMessage(txtMessage[i], "](1)");
+            } else if (txtMessage[i].contains("](2)")) {
+                txtMessage[i] = editTxtMessage(txtMessage[i], "](2)");
+            } else if (txtMessage[i].contains("](3)")) {
+                txtMessage[i] = editTxtMessage(txtMessage[i], "](3)");
+            }
+
+            if (i == 0)
+                txtMess.append(txtMessage[i]);
+            else
+                txtMess.append("<br>").append(txtMessage[i]);
+        }
+
+        lblTxtMessage.setText("<html>" + txtMess + "</html>");
         lblTxtMessage.addMouseListener(new PSIMouseListener(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
                 getPosition(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
                         mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
@@ -344,7 +363,8 @@ public class SarifViewerToolWindow {
     private void tabAnalisysSteps(int runsIndex, int resultsIndex) {
         messageAnalysisSteps.setVisible(false);
         scrollPaneAnalysisSteps.setVisible(false);
-        checkSelectError = resultsIndex;
+        checkSelectRunsIndex = runsIndex;
+        checkSelectResultsIndex = resultsIndex;
 
         DefaultListModel<String> defaultListModel = new DefaultListModel<>();
 
@@ -367,7 +387,7 @@ public class SarifViewerToolWindow {
             public void mouseClicked(MouseEvent e) {
                 int selected = listSteps.locationToIndex(e.getPoint());
 
-                if (resultsIndex == checkSelectError)
+                if (resultsIndex == checkSelectResultsIndex && runsIndex == checkSelectRunsIndex)
                     FileWithPsiElement.psiElement(
                         mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getArtifactLocation().getUri(),
                         getPosition(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getStartLine(),
@@ -376,6 +396,12 @@ public class SarifViewerToolWindow {
                                 mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getCodeFlows().get(0).getThreadFlows().get(0).getLocations().get(selected).getLocation().getPhysicalLocation().getRegion().getEndColumn()));
             }
         });
+    }
+
+    private String editTxtMessage(String txtMessage, String str) {
+        txtMessage = txtMessage.replace("[", "<u style='color:#589df6;'>");
+        txtMessage = txtMessage.replace(str, "</u>");
+        return txtMessage;
     }
 
     private ArrayList<Integer> getPosition(Integer startLine, Integer startColumn, Integer endLine, Integer endColumn) {
