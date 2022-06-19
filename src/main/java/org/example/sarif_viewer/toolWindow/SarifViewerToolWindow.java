@@ -8,7 +8,6 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.JBColor;
 import org.example.sarif_viewer.fileChooser.FileOpen;
 import org.example.sarif_viewer.fileChooser.GetPathProject;
-import org.example.sarif_viewer.messageBus.MessageBusAction;
 import org.example.sarif_viewer.notifier.ShowNotificationActivity;
 import org.example.sarif_viewer.parser.JsonParse;
 import org.example.sarif_viewer.parser.jsonKeys.MainKeys;
@@ -31,8 +30,6 @@ import java.util.regex.Pattern;
 import static org.example.sarif_viewer.fileChooser.FileOpen.pathFile;
 
 public class SarifViewerToolWindow {
-    private JPanel myToolWindowContent;
-
     private JTabbedPane tabbedPanelUp;
     private JTabbedPane tabbedPanelDown;
     private JButton openFile;
@@ -436,9 +433,5 @@ public class SarifViewerToolWindow {
                 position.set(3, position.get(1) + 1);
 
         return position;
-    }
-
-    public JPanel getContent() {
-        return myToolWindowContent;
     }
 }
