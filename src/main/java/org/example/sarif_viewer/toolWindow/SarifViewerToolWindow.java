@@ -8,6 +8,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.JBColor;
 import org.example.sarif_viewer.fileChooser.FileOpen;
 import org.example.sarif_viewer.fileChooser.GetPathProject;
+import org.example.sarif_viewer.messageBus.MessageBusAction;
 import org.example.sarif_viewer.notifier.ShowNotificationActivity;
 import org.example.sarif_viewer.parser.JsonParse;
 import org.example.sarif_viewer.parser.jsonKeys.MainKeys;
@@ -138,7 +139,7 @@ public class SarifViewerToolWindow {
 
                     tabLocations();
                 } else {
-                    ShowNotificationActivity.notifyNotSarifOpenFile(GetPathProject.getProject(), uriPathFile[uriPathFile.length - 1]);
+                    ShowNotificationActivity.notifyNotSarifOpenFile(Objects.requireNonNull(GetPathProject.getProject()), uriPathFile[uriPathFile.length - 1]);
                     openLog(0);
                 }
             }
@@ -149,7 +150,7 @@ public class SarifViewerToolWindow {
                 if (mainKeys.get$schema() != null)
                     tabLocations();
                 else {
-                    ShowNotificationActivity.notifyNotSarifOpenFile(GetPathProject.getProject(), uriPathFile[uriPathFile.length -1]);
+                    ShowNotificationActivity.notifyNotSarifOpenFile(Objects.requireNonNull(GetPathProject.getProject()), uriPathFile[uriPathFile.length -1]);
                     openLog(1);
                 }
             }
@@ -285,9 +286,11 @@ public class SarifViewerToolWindow {
         for (int i = 0; i < txtMessage.length; i++) {
             if (txtMessage[i].contains("](1)")) {
                 txtMessage[i] = editTxtMessage(txtMessage[i], "](1)");
-            } else if (txtMessage[i].contains("](2)")) {
+            }
+            if (txtMessage[i].contains("](2)")) {
                 txtMessage[i] = editTxtMessage(txtMessage[i], "](2)");
-            } else if (txtMessage[i].contains("](3)")) {
+            }
+            if (txtMessage[i].contains("](3)")) {
                 txtMessage[i] = editTxtMessage(txtMessage[i], "](3)");
             }
 
