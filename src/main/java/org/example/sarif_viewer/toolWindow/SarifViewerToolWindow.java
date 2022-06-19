@@ -120,7 +120,6 @@ public class SarifViewerToolWindow {
 
     private void openLog(int checkButton) {
         FileOpen.showDlg("sarif", "SARIF-Files (*.sarif)", false);
-
         String[] uriPathFile = pathFile.split(Pattern.quote("\\"));
 
         if (checkButton == 0) {
@@ -412,13 +411,7 @@ public class SarifViewerToolWindow {
         position.add(1, startColumn);
         position.add(2, endLine);
         position.add(3, endColumn);
-        // если ничего не надо то просто открываем на начале файла
-        /*if (position.get(0) == null) {
-            position.set(0, 0);
-            position.set(1, 0);
-            position.set(2, 0);
-            position.set(3, 0);
-        }*/
+
         // если есть только нач. строка то начнём с начала строки и закончим в конце (выделим всю строку)
         if (position.get(1) == null) {
             position.set(1, 0);
