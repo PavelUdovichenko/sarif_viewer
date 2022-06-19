@@ -30,6 +30,8 @@ import java.util.regex.Pattern;
 import static org.example.sarif_viewer.fileChooser.FileOpen.pathFile;
 
 public class SarifViewerToolWindow {
+    private JPanel myToolWindowContent;
+
     private JTabbedPane tabbedPanelUp;
     private JTabbedPane tabbedPanelDown;
     private JButton openFile;
@@ -433,5 +435,9 @@ public class SarifViewerToolWindow {
                 position.set(3, position.get(1) + 1);
 
         return position;
+    }
+
+    public JPanel getContent() {
+        return myToolWindowContent;
     }
 }
