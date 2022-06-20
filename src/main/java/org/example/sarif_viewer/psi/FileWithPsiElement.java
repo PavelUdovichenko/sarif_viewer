@@ -15,6 +15,7 @@ import org.example.sarif_viewer.notifier.ShowNotificationActivity;
 import java.awt.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class FileWithPsiElement {
     public static void psiElement(String fName, ArrayList<Integer> position) {
@@ -24,7 +25,7 @@ public class FileWithPsiElement {
         Path usedPath = Path.of(newPath);
 
         if (!usedPath.isAbsolute()) // если он не абсолютный, то прибавляем путь проекта
-            newPath = (project.getBasePath() +"/"+ newPath);
+            newPath = (Objects.requireNonNull(project).getBasePath() +"/"+ newPath);
 
         VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(newPath);// создаём виртуалочку нашего файла;
 
@@ -43,9 +44,7 @@ public class FileWithPsiElement {
                 }
             } else
                 ShowNotificationActivity.notifyError(project, newPath);
-
-        } else
-            ShowNotificationActivity.notifyError(project, newPath);
+        }
     }
 
     private static void selectedText(Project project, VirtualFile virtualFile, ArrayList<Integer> position) {

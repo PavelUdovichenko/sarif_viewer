@@ -12,7 +12,6 @@ import org.example.sarif_viewer.notifier.ShowNotificationActivity;
 import org.example.sarif_viewer.parser.JsonParse;
 import org.example.sarif_viewer.parser.jsonKeys.MainKeys;
 import org.example.sarif_viewer.psi.FileWithPsiElement;
-import org.example.sarif_viewer.psi.PSIMouseListener;
 
 import javax.swing.*;
 import javax.swing.text.Position;
@@ -178,10 +177,7 @@ public class SarifViewerToolWindow {
 
                     if (mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().contains(node.toString())) {
                         FileWithPsiElement.psiElement(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                                getPosition(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
-                                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
-                                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
-                                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
+                                null);
                         break;
                     }
                 }
@@ -299,11 +295,17 @@ public class SarifViewerToolWindow {
         }
 
         lblTxtMessage.setText("<html>" + txtMess + "</html>");
-        lblTxtMessage.addMouseListener(new PSIMouseListener(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                getPosition(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
-                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
-                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
-                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getEndColumn())));
+
+        lblTxtMessage.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                FileWithPsiElement.psiElement(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                        getPosition(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
+                                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
+                                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
+                                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
+            }
+        });
 
         String ruleId = mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRuleId();
         ruleIdLabel.setVisible(true);
@@ -329,13 +331,23 @@ public class SarifViewerToolWindow {
         locationLabel.setVisible(true);
         lblLoc.setVisible(true);
         lblLoc.setText("<html><u>" + uri[uri.length - 1] + "</u></html>");
-        lblLoc.addMouseListener(new PSIMouseListener(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(), pos));
+        lblLoc.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                FileWithPsiElement.psiElement(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(), pos);
+            }
+        });
 
         logLabel.setVisible(true);
         lblLog.setVisible(true);
         lblLog.setText("<html><u>" + FileOpen.openFile + "</u></html>");
         lblLog.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        lblLog.addMouseListener(new PSIMouseListener(FileOpen.pathFile, null));
+        lblLog.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                FileWithPsiElement.psiElement(FileOpen.pathFile, null);
+            }
+        });
     }
 
     private void tabInfoClear() {
