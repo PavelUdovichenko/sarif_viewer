@@ -17,15 +17,6 @@ plugins {
     //id("org.intellij.sdk.psi") version "A"
 }
 
-dependencies {
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
-    implementation("com.fasterxml.jackson.core:jackson-core:2.13.2")
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations
-    implementation("com.fasterxml.jackson.core:jackson-annotations:2.13.2")
-}
-
 group = properties("pluginGroup")
 version = properties("pluginVersion")
 
@@ -56,6 +47,15 @@ qodana {
     reportPath.set(projectDir.resolve("build/reports/inspections").canonicalPath)
     saveReport.set(true)
     showReport.set(System.getenv("QODANA_SHOW_REPORT")?.toBoolean() ?: false)
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+    implementation("com.fasterxml.jackson.core:jackson-core:2.13.3")
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.13.3")
 }
 
 tasks {
