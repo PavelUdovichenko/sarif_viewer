@@ -64,7 +64,6 @@ public class SarifViewerToolWindow {
 
     public SarifViewerToolWindow(ToolWindow toolWindow) {
         getStyles();
-
         openFileMain.addActionListener(e -> openLog(0));
         openFile.addActionListener(e -> openLog(1));
     }
