@@ -263,6 +263,9 @@ public class SarifViewerToolWindow {
         StringBuilder txtMess = new StringBuilder();
         lblTxtMessage.setVisible(true);
 
+        checkSelectRunsIndex = runsIndex;
+        checkSelectResultsIndex = resultsIndex;
+
         for (int i = 0; i < txtMessage.length; i++) {
             if (txtMessage[i].contains("](1)")) {
                 txtMessage[i] = editTxtMessage(txtMessage[i], "](1)");
@@ -285,11 +288,12 @@ public class SarifViewerToolWindow {
         lblTxtMessage.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                FileWithPsiElement.psiElement(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                        getPosition(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
-                                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
-                                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
-                                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
+                if (resultsIndex == checkSelectResultsIndex && runsIndex == checkSelectRunsIndex)
+                    FileWithPsiElement.psiElement(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                            getPosition(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
+                                    mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
+                                    mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
+                                    mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getRelatedLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
             }
         });
 
@@ -320,11 +324,12 @@ public class SarifViewerToolWindow {
         lblLoc.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                FileWithPsiElement.psiElement(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                        getPosition(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
-                                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
-                                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
-                                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
+                if (resultsIndex == checkSelectResultsIndex && runsIndex == checkSelectRunsIndex)
+                    FileWithPsiElement.psiElement(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                            getPosition(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
+                                    mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
+                                    mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
+                                    mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
             }
         });
 
