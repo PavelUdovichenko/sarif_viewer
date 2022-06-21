@@ -15,10 +15,7 @@ import org.example.sarif_viewer.psi.FileWithPsiElement;
 
 import javax.swing.*;
 import javax.swing.text.Position;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
+import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -63,6 +60,7 @@ public class SarifViewerToolWindow {
     private int checkSelectRunsIndex = 0, checkSelectResultsIndex = 0;
 
     ArrayList<Integer> position = new ArrayList<>();
+    ArrayList<Integer> indexesSelectedNode = new ArrayList<>();
 
     public SarifViewerToolWindow(ToolWindow toolWindow) {
         getStyles();
@@ -160,27 +158,21 @@ public class SarifViewerToolWindow {
         treeLocations.getSelectionModel().addTreeSelectionListener(e -> {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
 
-            for (int runsIndex = 0; runsIndex < mainKeys.getRuns().size(); runsIndex++) {
-                for (int resultsIndex = 0; resultsIndex < mainKeys.getRuns().get(runsIndex).getResults().size(); resultsIndex++) {
-                    if (mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getMessage().getText().contains(node.toString())) {
-                        tabInfoClear();
-                        tabInfo(runsIndex, resultsIndex);
-                        tabAnalisysSteps(runsIndex, resultsIndex);
+            indexesSelectedNode.clear();
+            getNodeIndex(treeLocations, node, 0);
 
-                        FileWithPsiElement.psiElement(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                                getPosition(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
-                                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
-                                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
-                                        mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
-                        break;
-                    }
+            if (indexesSelectedNode.size() == 1) {
+                FileWithPsiElement.psiElement(mainKeys.getRuns().get(indexesSelectedNode.get(0)).getResults().get(0).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(), null);
+            } else {
+                tabInfoClear();
+                tabInfo(indexesSelectedNode.get(1), indexesSelectedNode.get(0));
+                tabAnalisysSteps(indexesSelectedNode.get(1), indexesSelectedNode.get(0));
 
-                    if (mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().contains(node.toString())) {
-                        FileWithPsiElement.psiElement(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
-                                null);
-                        break;
-                    }
-                }
+                FileWithPsiElement.psiElement(mainKeys.getRuns().get(indexesSelectedNode.get(1)).getResults().get(indexesSelectedNode.get(0)).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                        getPosition(mainKeys.getRuns().get(indexesSelectedNode.get(1)).getResults().get(indexesSelectedNode.get(0)).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
+                                mainKeys.getRuns().get(indexesSelectedNode.get(1)).getResults().get(indexesSelectedNode.get(0)).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
+                                mainKeys.getRuns().get(indexesSelectedNode.get(1)).getResults().get(indexesSelectedNode.get(0)).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
+                                mainKeys.getRuns().get(indexesSelectedNode.get(1)).getResults().get(indexesSelectedNode.get(0)).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
             }
         });
 
@@ -193,9 +185,9 @@ public class SarifViewerToolWindow {
                 Object obj = ((DefaultMutableTreeNode) value).getUserObject();
                 if (leaf) {
                     for (int runsIndex = 0; runsIndex < mainKeys.getRuns().size(); runsIndex++) {
-                        for (int i = 0; i < mainKeys.getRuns().get(runsIndex).getResults().size(); i++) {
-                            if (mainKeys.getRuns().get(runsIndex).getResults().get(i).getMessage().getText().contains(obj.toString())) {
-                                setIcon(getIconNode(mainKeys.getRuns().get(runsIndex).getResults().get(i).getLevel()));
+                        for (int resultsIndex = 0; resultsIndex < mainKeys.getRuns().get(runsIndex).getResults().size(); resultsIndex++) {
+                            if (mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getMessage().getText().contains(obj.toString())) {
+                                setIcon(getIconNode(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLevel()));
                                 break;
                             }
                         }
@@ -213,36 +205,35 @@ public class SarifViewerToolWindow {
             treeLocations.collapsePath(treePath);
     }
 
+    private ArrayList<Integer> getNodeIndex(JTree tree, DefaultMutableTreeNode node, int indx) {
+        TreeNode root = (TreeNode) tree.getModel().getRoot();
+        if (node == root)
+            return null;
+
+        TreeNode parent = node.getParent();
+        if (parent == null)
+            return null;
+        else
+            indexesSelectedNode.add(indx, parent.getIndex(node));
+
+        ArrayList<Integer> parentIndex = getNodeIndex(tree, (DefaultMutableTreeNode) parent, 1);
+        if (parentIndex == null)
+            return null;
+
+        return indexesSelectedNode;
+    }
+
     private void getModelJTree(JTree jTree) {
-        ArrayList<String> checkParentNodeName = new ArrayList<>();
         DefaultMutableTreeNode parentRoot = new DefaultMutableTreeNode("sarif_view");
-
-        boolean check = false;
-
-        DefaultMutableTreeNode errorNameFile = null;
+        DefaultMutableTreeNode errorNameFile;
 
         for (int runsIndex = 0; runsIndex < mainKeys.getRuns().size(); runsIndex++) {
-            for (int parentsNode = 0; parentsNode < mainKeys.getRuns().get(runsIndex).getResults().size(); parentsNode++) {
-                String[] uri = mainKeys.getRuns().get(runsIndex).getResults().get(parentsNode).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
+            String[] uri = mainKeys.getRuns().get(runsIndex).getResults().get(0).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri().split("/");
+            errorNameFile = new DefaultMutableTreeNode(uri[uri.length - 1]);
+            parentRoot.add(errorNameFile);
 
-                if (checkParentNodeName.isEmpty()) {
-                    errorNameFile = new DefaultMutableTreeNode(uri[uri.length - 1]);
-                    parentRoot.add(errorNameFile);
-                    checkParentNodeName.add(uri[uri.length - 1]);
-                } else {
-                    for (String s : checkParentNodeName) {
-                        check = !s.equals(uri[uri.length - 1]);
-                    }
-                }
-
-                if (check) {
-                    errorNameFile = new DefaultMutableTreeNode(uri[uri.length - 1]);
-                    parentRoot.add(errorNameFile);
-                    checkParentNodeName.add(uri[uri.length - 1]);
-                    check = false;
-                }
-
-                errorNameFile.add(new DefaultMutableTreeNode(mainKeys.getRuns().get(runsIndex).getResults().get(parentsNode).getMessage().getText()));
+            for (int resultsIndex = 0; resultsIndex < mainKeys.getRuns().get(runsIndex).getResults().size(); resultsIndex++) {
+                errorNameFile.add(new DefaultMutableTreeNode(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getMessage().getText().split(" {2}")[0]));
 
                 DefaultTreeModel model = (DefaultTreeModel) this.treeLocations.getModel();
                 model.setRoot(parentRoot);
@@ -268,11 +259,6 @@ public class SarifViewerToolWindow {
     }
 
     private void tabInfo(int runsIndex, int resultsIndex) {
-        ArrayList<Integer> pos = getPosition(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
-                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
-                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
-                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn());
-
         String[] txtMessage = mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getMessage().getText().split(" {2}");
         StringBuilder txtMess = new StringBuilder();
         lblTxtMessage.setVisible(true);
@@ -334,7 +320,11 @@ public class SarifViewerToolWindow {
         lblLoc.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                FileWithPsiElement.psiElement(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(), pos);
+                FileWithPsiElement.psiElement(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getArtifactLocation().getUri(),
+                        getPosition(mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartLine(),
+                                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getStartColumn(),
+                                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndLine(),
+                                mainKeys.getRuns().get(runsIndex).getResults().get(resultsIndex).getLocations().get(0).getPhysicalLocation().getRegion().getEndColumn()));
             }
         });
 
